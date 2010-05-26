@@ -1,7 +1,7 @@
 Torneira - Rapid Web Framework
 ======================
 
-Torneira is a rapid web framework build on top of Tornado_
+Torneira is a lightweight and rapid web framework build on top of Tornado_.
 Its name came from the idea of getting rapid and fluid development.
 
 Dependencies

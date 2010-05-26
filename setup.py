@@ -18,8 +18,8 @@ from torneira import __version__
 setup(
     name = 'torneira',
     version = __version__,
-    description = "",
-    long_description = """""",
+    description = "Torneira is a lightweight and rapid web framework build on top of Tornado",
+    long_description = """Torneira is a lightweight and rapid web framework build on top of Tornado""",
     keywords = 'torneira tornado mako sqlalchemy',
     author = 'Marcel Nicolay',
     author_email = 'marcel.nicolay@gmail.com',
