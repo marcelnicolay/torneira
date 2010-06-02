@@ -5,4 +5,4 @@ clean:
 	
 unit: 
 	@echo "Running torneira unit tests..."
-	@cd torneira && nosetests -s --verbose --with-coverage --cover-package=torneira tests/unit/*
+	@nosetests -s --verbose --with-coverage --cover-package=torneira tests/unit/*
