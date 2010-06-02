@@ -12,40 +12,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from routes import Mapper
+from torneira.core import Singleton
+import logging
+
 try:
     import urls
 except ImportError, ie:
 	logging.warn("Not found urls file, using urls default!")
 	import urls_default as urls
 
-class TorneiraDispacther():
+class TorneiraDispatcher(Singleton):
 
 	__mapper__ = None
 	__controllers__ = None
 	
-	def __new__(cls,*args, kwars**):
-		if not cls._instance:
-			cls._instance = __new__(*args, *kwargs)
-		return cls._instance
-		
 	def getMapper(self):
 		if not self.__mapper__:
 			mapper = Mapper()
-	        for name, route, controller, action, module in urls.urls:
-    	        mapper.connect(name, route, controller="%s.%s" % (module,controller), action=action)
-    	    self.__mapper__ = mapper
+			for name, route, controller, action, module in urls.urls:
+				mapper.connect(name, route, controller="%s.%s" % (module,controller), action=action)
+			self.__mapper__ = mapper
 		return self.__mapper__
 		
 	def getController(self, controller):
 		if not self.__controllers__:
-        	self.__controllers__ = {}
-        
+			self.__controllers__ = {}
+
 		if not controller in self.__controllers__:
-		    module, ctrl_name = controller.split(".")
-		    ctrl = getattr(__import__("controller.%s" % module, fromlist=[ctrl_name]), ctrl_name)
-	        self.__controllers__[controller] = ctrl()
-    
-	    return self.__controllers__[controller]
+			module, ctrl_name = controller.split(".")
+			ctrl = getattr(__import__("controller.%s" % module, fromlist=[ctrl_name]), ctrl_name)
+			self.__controllers__[controller] = ctrl()
+
+		return self.__controllers__[controller]
 		
 def url(route=None, controller=None, action="index", name=None, module=None):
     return [name, route, controller, action, module]

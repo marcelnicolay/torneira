@@ -16,8 +16,12 @@ from mako import exceptions
 from mako.lookup import *
 
 import simplejson
-import settings
 import logging
+
+try:
+    import settings
+except ImportError, ie:
+	from torneira.core import settings_default as settings
 
 class BaseController():
     

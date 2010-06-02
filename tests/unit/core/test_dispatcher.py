@@ -10,5 +10,3 @@ def test_can_be_load_dsipatcher():
 		mox.VerifyAll()
 	finally:
 		mox.UnsetStubs()
-	
-	

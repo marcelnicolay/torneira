@@ -16,6 +16,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.interfaces import ConnectionProxy
 from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.orm.interfaces import SessionExtension
+from torneira.core import Singleton
 import logging
 import time
 import settings
@@ -35,9 +36,9 @@ class TimerProxy(ConnectionProxy):
 
 
 class TorneiraSession():
-	def __new__(cls, *args, **kwarg)
+	def __new__(cls, *args, **kwarg):
 		if not cls._instance:
 			engine = create_engine(settings.DATABASE_ENGINE, pool_size=settings.DATABASE_POOL_SIZE, pool_recycle=300, proxy=TimerProxy())
-			cls._session = scoped_session(sessionmaker(autocommit=True, autoflush=False, expire_on_commit=False)
+			cls._session = scoped_session(sessionmaker(autocommit=True, autoflush=False, expire_on_commit=False))
 		return cls._session
 
