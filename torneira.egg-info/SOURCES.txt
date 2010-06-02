@@ -1,0 +1,17 @@
+setup.py
+torneira/__init__.py
+torneira.egg-info/PKG-INFO
+torneira.egg-info/SOURCES.txt
+torneira.egg-info/dependency_links.txt
+torneira.egg-info/top_level.txt
+torneira/controller/__init__.py
+torneira/controller/base.py
+torneira/core/__init__.py
+torneira/core/daemon.py
+torneira/core/dispatcher.py
+torneira/core/meta.py
+torneira/core/server.py
+torneira/core/settings_default.py
+torneira/core/urls_default.py
+torneira/models/__init__.py
+torneira/models/base.py
