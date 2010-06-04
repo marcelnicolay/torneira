@@ -65,7 +65,7 @@ class TorneiraHandler(RequestHandler):
         match = mapper.match(uri)
         if match:
             try:
-                controller = TorneiraDispacther().getController(match['controller'])
+                controller = TorneiraDispatcher().getController(match['controller'])
                 controller.handler = self
 
                 response = getattr(controller, match['action'])(**self.prepared_arguments(match))
