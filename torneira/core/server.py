@@ -57,7 +57,7 @@ class TorneiraServer(Daemon):
 class TorneiraHandler(RequestHandler):
 
     def process_request(self, *args, **kargs):
-        mapper = TorneiraDispacther().getMapper()
+        mapper = TorneiraDispatcher().getMapper()
         
         # remove get args
         uri = re.sub("\?.*", "", self.request.uri)

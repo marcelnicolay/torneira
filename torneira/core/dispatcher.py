@@ -16,20 +16,27 @@ from torneira.core import Singleton
 import logging
 
 try:
-    import urls
+    import settings
 except ImportError, ie:
-	logging.warn("Not found urls file, using urls default!")
-	import urls_default as urls
+	logging.warn("Not found settings file, using settings default!")
+	import settings_default as settings
 
 class TorneiraDispatcher(Singleton):
 
 	__mapper__ = None
 	__controllers__ = None
-	
+	__urls__ = None
+		
+	def getUrls(self):
+		if not self.__urls__:
+			exec("from %s import urls" % settings.ROOT_URLS)
+			self.__urls__ = urls
+		return self.__urls__
+		
 	def getMapper(self):
 		if not self.__mapper__:
 			mapper = Mapper()
-			for name, route, controller, action, module in urls.urls:
+			for name, route, controller, action, module in self.getUrls():
 				mapper.connect(name, route, controller="%s.%s" % (module,controller), action=action)
 			self.__mapper__ = mapper
 		return self.__mapper__
