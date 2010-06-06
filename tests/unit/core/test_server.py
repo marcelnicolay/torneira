@@ -371,3 +371,66 @@ def test_can_handler_process_request_render_404_template():
 		mox.VerifyAll()
 	finally:
 		mox.UnsetStubs()
+
+def test_can_handler_process_prepared_arguments():
+	mox = Mox()
+
+	mox.StubOutWithMock(server, "TorneiraDispatcher", use_mock_anything=True)
+
+	application_mock = mox.CreateMockAnything()
+	application_mock.ui_methods = {}
+	application_mock.ui_modules = {}	
+	
+	request_mock = mox.CreateMockAnything()
+	request_mock.supports_http_1_1().AndReturn(True)
+	request_mock.arguments = {'arg2':['should-be-value2']}
+	
+	match = {'controller':'should-be-controller','action':'shouldBeAction', 'arg1':'should-be-value1'}
+	
+	mox.ReplayAll()
+
+	try:
+		handler = server.TorneiraHandler(application_mock, request_mock)
+		args = handler.prepared_arguments(match)
+		
+		assert args['arg1'] == 'should-be-value1'
+		assert args['arg2'] == 'should-be-value2'	
+				
+		mox.VerifyAll()
+	finally:
+		mox.UnsetStubs()
+
+def test_can_handler_process_profiling():
+	mox = Mox()
+
+	mox.StubOutWithMock(server, "settings", use_mock_anything=True)
+	mox.StubOutWithMock(server, "profile", use_mock_anything=True)
+	server.settings.PROFILING = True
+	server.settings.PROFILE_FILE = "should-be-profile-out-file"
+
+	application_mock = mox.CreateMockAnything()
+	application_mock.ui_methods = {}
+	application_mock.ui_modules = {}	
+	
+	request_mock = mox.CreateMockAnything()
+	request_mock.supports_http_1_1().AndReturn(True)
+
+	process_request_mock = mox.CreateMockAnything()
+	profile_mock = mox.CreateMockAnything()
+	profile_mock.runcall(process_request_mock, shouldBeArg='shouldBeValue')
+	profile_mock.dump_stats("should-be-profile-out-file")
+	server.profile = mox.CreateMockAnything()
+	server.profile.Profile().AndReturn(profile_mock)
+	
+	
+	mox.ReplayAll()
+
+	try:
+		handler = server.TorneiraHandler(application_mock, request_mock)
+		handler.process_request = process_request_mock
+		handler.profiling(shouldBeArg='shouldBeValue')
+				
+		mox.VerifyAll()
+	finally:
+		mox.UnsetStubs()
+
