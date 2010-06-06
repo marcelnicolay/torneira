@@ -372,7 +372,7 @@ def test_can_handler_process_request_render_404_template():
 	finally:
 		mox.UnsetStubs()
 
-def test_can_handler_process_prepared_arguments():
+def test_can_handler_prepared_arguments():
 	mox = Mox()
 
 	mox.StubOutWithMock(server, "TorneiraDispatcher", use_mock_anything=True)
@@ -400,7 +400,7 @@ def test_can_handler_process_prepared_arguments():
 	finally:
 		mox.UnsetStubs()
 
-def test_can_handler_process_profiling():
+def test_can_handler_profiling():
 	mox = Mox()
 
 	mox.StubOutWithMock(server, "settings", use_mock_anything=True)
