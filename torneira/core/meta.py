@@ -35,10 +35,11 @@ class TimerProxy(ConnectionProxy):
             logging.debug("Total Time: %f" % total)
 
 
-class TorneiraSession():
+class TorneiraSession(object):
+	_session = None
 	def __new__(cls, *args, **kwarg):
-		if not cls._instance:
+		if not cls._session:
 			engine = create_engine(settings.DATABASE_ENGINE, pool_size=settings.DATABASE_POOL_SIZE, pool_recycle=300, proxy=TimerProxy())
-			cls._session = scoped_session(sessionmaker(autocommit=True, autoflush=False, expire_on_commit=False))
+			cls._session = scoped_session(sessionmaker(autocommit=True, autoflush=False, expire_on_commit=False, bind=engine))
 		return cls._session
 

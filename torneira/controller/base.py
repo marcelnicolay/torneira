@@ -50,3 +50,19 @@ class BaseController():
     def render_to_json(self, data):
         self.handler.set_header("Content-Type", "application/json; charset=UTF-8")
         return simplejson.dumps(data)
+    
+    def dict_to_node(self, dictionary, buffer):
+    	for k, v in dictionary.iteritems():
+    		buffer += "<%(key)s>%(value)s</%(key)s>" % {'key':k,'value':v if not isinstance(v,dict) else self.dict_to_node(v, buffer)}
+    	
+    	return buffer
+    def render_to_xml(self, data):
+    	self.handler.set_header("Content-Type", "text/xml; charset=UTF-8")
+    	
+    	return '<?xml version="1.0"?>' + self.dict_to_node(data, '')
+    
+    def render_to_extension(self, extension, data):
+    	if extension == "xml":
+    		return self.render_to_xml(data)
+    	else:
+    		return self.render_to_json(data)
