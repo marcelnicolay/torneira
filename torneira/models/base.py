@@ -18,6 +18,7 @@ from sqlalchemy.orm.interfaces import MapperExtension
 from sqlalchemy.orm.query import Query
 from sqlalchemy import Integer, DateTime
 from torneira.core.meta import TorneiraSession
+import datetime
 
 metadata = MetaData()
         
@@ -36,8 +37,10 @@ class Repository(object):
                 continue
 
             attr = getattr(self, attrname)
-            if isinstance(attr, (basestring, int, float, long, DateTime)):
+            if isinstance(attr, (basestring, int, float, long)):
                 items[attrname] = attr
+            if isinstance(attr, (datetime.datetime, datetime.time)):
+                items[attrname] = attr.isoformat()
             if isinstance(attr, list):
                 items[attrname] = [x.as_dict() for x in attr]
 
