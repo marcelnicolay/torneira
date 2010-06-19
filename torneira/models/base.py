@@ -16,6 +16,7 @@ from sqlalchemy import MetaData, Column, Integer, Unicode
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
 from sqlalchemy.orm.interfaces import MapperExtension
 from sqlalchemy.orm.query import Query
+from sqlalchemy import Integer, DateTime
 from torneira.core.meta import TorneiraSession
 
 metadata = MetaData()
@@ -35,11 +36,8 @@ class Repository(object):
                 continue
 
             attr = getattr(self, attrname)
-            if isinstance(attr, (basestring, int, float)):
+            if isinstance(attr, (basestring, int, float, long, DateTime)):
                 items[attrname] = attr
-            if hasattr(attr, 'serializable'):
-                items[attr.serializable] = apply(attr)
-
             if isinstance(attr, list):
                 items[attrname] = [x.as_dict() for x in attr]
 

@@ -52,8 +52,20 @@ class BaseController():
         return simplejson.dumps(data)
     
     def dict_to_node(self, dictionary, buffer):
+    	
     	for k, v in dictionary.iteritems():
-    		buffer += "<%(key)s>%(value)s</%(key)s>" % {'key':k,'value':v if not isinstance(v,dict) else self.dict_to_node(v, buffer)}
+    		key = k
+    		if isinstance(v, dict):
+    			v = self.dict_to_node(v, buffer)
+    		elif isinstance(v, list):
+    			lista = v[:]
+    			v = ""
+    			for item in lista:
+    				v += "<%(key)s>%(value)s</%(key)s>" % {'key':k[0:len(k)-1],'value':self.dict_to_node(item, "") }
+    		elif isinstance(v, str):
+    			v = "<![CDATA[%s]]>" % v
+    			 
+    		buffer += "<%(key)s>%(value)s</%(key)s>" % {'key':k,'value':v }
     	
     	return buffer
     def render_to_xml(self, data):
