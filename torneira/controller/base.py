@@ -14,6 +14,7 @@
 
 from mako import exceptions
 from mako.lookup import *
+from torneira.helper import simplexml
 
 import simplejson
 import logging
@@ -51,31 +52,9 @@ class BaseController():
         self.handler.set_header("Content-Type", "application/json; charset=UTF-8")
         return simplejson.dumps(data)
     
-    def dict_to_node(self, dictionary, buffer):
-    	
-		for k, v in dictionary.iteritems():
-			key = k
-			if isinstance(v, dict):
-				v = self.dict_to_node(v, buffer)
-			elif isinstance(v, list):
-				lista = v[:]
-				v = ""
-				for item in lista:
-					v += "<%(key)s>%(value)s</%(key)s>" % {'key':k[0:len(k)-1],'value':self.dict_to_node(item, u"") }
-			elif isinstance(v, str):
-				v = "<![CDATA[%s]]>" % v
-			 
-			try:
-				buffer += "<%(key)s>%(value)s</%(key)s>" % {'key':k,'value':v }
-			except UnicodeDecodeError, ue:
-				logging.exception("%s,%s" % (k,v))
-	
-		return buffer
-
     def render_to_xml(self, data):
     	self.handler.set_header("Content-Type", "text/xml; charset=UTF-8")
-    	
-    	return '<?xml version="1.0"?>' + self.dict_to_node(data, '')
+    	return simplexml.dumps(data)
     
     def render_to_extension(self, extension, data):
     	if extension == "xml":
