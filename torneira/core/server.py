@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
- 
+
 # Licensed under the Open Software License ("OSL") v. 3.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
- 
+
 #     http://www.opensource.org/licenses/osl-3.0.php
- 
+
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,37 +28,35 @@ try:
 except ImportError, ie:
 	logging.warn("Not found settings file, using settings default!")
 	import settings_default as settings
-	
-COOKIE_SECRET = "29NbhyfgaA092ZkjMbNvCx06789jdA8iIlLqz7d1D9c8"
 
 class TorneiraServer(Daemon):
-    
+
     def __init__(self, pidfile, port, project_root, media_dir):
         self.port = port
         self.project_root = project_root
         self.media_dir = media_dir
-        
+
         return Daemon.__init__(self, pidfile)
 
     def run(self):
-    
+
         application = Application([
             (r"/media/(.*)", StaticFileHandler, {"path": self.media_dir}),
             (r"/.*", TorneiraHandler)
-        ], cookie_secret=COOKIE_SECRET)
-        
+        ], cookie_secret=settings.COOKIE_SECRET)
+
         http_server = HTTPServer(application)
         http_server.listen(self.port)
-        
+
         logging.info("Torneira Server START! listening port %s " % self.port)
-        
+
         IOLoop.instance().start()
-        
+
 class TorneiraHandler(RequestHandler):
 
     def process_request(self, *args, **kargs):
         mapper = TorneiraDispatcher().getMapper()
-        
+
         # remove get args
         uri = re.sub("\?.*", "", self.request.uri)
 
@@ -69,10 +67,10 @@ class TorneiraHandler(RequestHandler):
                 controller.handler = self
 
                 response = getattr(controller, match['action'])(**self.prepared_arguments(match))
-                
+
                 if not response: return
                 self.write(response)
-            
+
             except Exception, e:
                 logging.exception("500 - Erro ao processar a requisicao %s" % e)
                 if settings.DEBUG:
@@ -92,7 +90,7 @@ class TorneiraHandler(RequestHandler):
             self.profiling(*args, **kw)
         else:
             self.process_request(*args, **kw)
-    
+
     def post(self, *args, **kw):
         logging.debug("POST %s processing..." % self.request.uri)
         if settings.PROFILING:
@@ -104,11 +102,11 @@ class TorneiraHandler(RequestHandler):
         arguments = {}
         for arg,value in self.request.arguments.iteritems():
             arguments[arg] = value[0]
-            
+
         for key,value in match.iteritems():
             if key not in ('controller','action'):
                 arguments[key] = value
-                        
+
         return arguments
 
     def profiling(self, *args, **kw):
