@@ -12,6 +12,7 @@ Dependencies
  * SqlAlchemy_ >= 0.5.6
  * nose_ >= 0.11.0
  * mox_ >= 0.5.1
+ * simplejson_
 
 Installing
 ==========
@@ -38,5 +39,6 @@ With new features
 .. _SqlAlchemy: http://www.sqlalchemy.org/
 .. _nose: http://code.google.com/p/python-nose/
 .. _mox: http://code.google.com/p/pymox/test
+.. _simplejson: http://code.google.com/p/simplejson/
 
 E-mail: marcel.nicolay at gmail com
