@@ -22,6 +22,7 @@ import logging
 try:
     import settings
 except ImportError, ie:
+    logging.warn("Not found settings file, using settings default!")
     from torneira.core import settings_default as settings
 
 class BaseController():
