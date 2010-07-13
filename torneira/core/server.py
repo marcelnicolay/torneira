@@ -26,8 +26,8 @@ import re, logging, sys
 try:
     import settings
 except ImportError, ie:
-	logging.warn("Not found settings file, using settings default!")
-	import settings_default as settings
+    logging.warn("Not found settings file, using settings default!")
+    import settings_default as settings
 
 class TorneiraServer(Daemon):
 
