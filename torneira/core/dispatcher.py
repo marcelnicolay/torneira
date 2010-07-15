@@ -36,7 +36,7 @@ class TorneiraDispatcher(Singleton):
     def getMapper(self):
         if not self.__mapper__:
             mapper = Mapper()
-            for name, route, controller, action, module in self.getUrls():
+            for name, route, controller, action in self.getUrls():
                 mapper.connect(name, route, controller=controller, action=action)
             self.__mapper__ = mapper
         return self.__mapper__
@@ -54,4 +54,4 @@ class TorneiraDispatcher(Singleton):
 
 
 def url(route=None, controller=None, action="index", name=None):
-    return [name, route, controller, action, module]
+    return [name, route, controller, action]

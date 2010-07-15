@@ -15,7 +15,7 @@
 from mox import Mox
 from torneira.core import dispatcher
 
-urls = [("url_name", "url_route", "controller", "action", "module")]
+urls = [("url_name", "url_route", "controller", "action")]
 
 def test_can_be_load_dispatcher():
     mox = Mox()
