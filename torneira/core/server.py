@@ -54,7 +54,7 @@ class TorneiraServer(Daemon):
 
 class TorneiraHandler(RequestHandler):
 
-    def process_request(self, *args, **kargs):
+    def process_request(self, method='GET', *args, **kargs):
         mapper = TorneiraDispatcher().getMapper()
 
         # remove get args
@@ -66,7 +66,11 @@ class TorneiraHandler(RequestHandler):
                 controller = TorneiraDispatcher().getController(match['controller'])
                 controller.handler = self
 
-                response = getattr(controller, match['action'])(**self.prepared_arguments(match))
+                action = match['action']
+                if not action:
+                    action = {'GET':'index','POST':'create','PUT':'update','DELETE':'delete'}['method']			
+			
+                response = getattr(controller, action)(**self.prepared_arguments(match))
 
                 if not response: return
                 self.write(response)
@@ -89,14 +93,28 @@ class TorneiraHandler(RequestHandler):
         if settings.PROFILING:
             self.profiling(*args, **kw)
         else:
-            self.process_request(*args, **kw)
+            self.process_request('GET',*args, **kw)
 
     def post(self, *args, **kw):
         logging.debug("POST %s processing..." % self.request.uri)
         if settings.PROFILING:
             self.profiling(*args, **kw)
         else:
-            self.process_request(*args, **kw)
+            self.process_request('POST', *args, **kw)
+
+    def put(self, *args, **kw):
+        logging.debug("PUT %s processing..." % self.request.uri)
+        if settings.PROFILING:
+            self.profiling(*args, **kw)
+        else:
+            self.process_request('PUT', *args, **kw)
+
+    def delete(self, *args, **kw):
+        logging.debug("DELETE %s processing..." % self.request.uri)
+        if settings.PROFILING:
+            self.profiling(*args, **kw)
+        else:
+            self.process_request('DELETE', *args, **kw)
 
     def prepared_arguments(self, match):
         arguments = {}

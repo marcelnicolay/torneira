@@ -37,7 +37,7 @@ class TorneiraDispatcher(Singleton):
         if not self.__mapper__:
             mapper = Mapper()
             for name, route, controller, action, module in self.getUrls():
-                mapper.connect(name, route, controller="%s.%s" % (module,controller), action=action)
+                mapper.connect(name, route, controller=controller, action=action)
             self.__mapper__ = mapper
         return self.__mapper__
 
@@ -45,13 +45,13 @@ class TorneiraDispatcher(Singleton):
         if not self.__controllers__:
             self.__controllers__ = {}
 
-        if not controller in self.__controllers__:
-            module, ctrl_name = controller.split(".")
-            ctrl = getattr(__import__("controller.%s" % module, fromlist=[ctrl_name]), ctrl_name)
-            self.__controllers__[controller] = ctrl()
+	ctrl_name = controller.__name__
+	
+        if not ctrl_name in self.__controllers__:
+            self.__controllers__[ctrl_name] = controller()
 
-        return self.__controllers__[controller]
+        return self.__controllers__[ctrl_name]
 
 
-def url(route=None, controller=None, action="index", name=None, module=None):
+def url(route=None, controller=None, action="index", name=None):
     return [name, route, controller, action, module]

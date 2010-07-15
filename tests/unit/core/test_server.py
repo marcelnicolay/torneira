@@ -43,7 +43,7 @@ def test_can_be_run():
     server.Application([
             (r"/media/(.*)", "should-be-filehandler", {"path": "should-be-media-dir"}),
             (r"/.*", "should-be-torneirahandler")
-    ], cookie_secret=server.COOKIE_SECRET).AndReturn(application_mock)
+    ], cookie_secret='29NbhyfgaA092ZkjMbNvCx06789jdA8iIlLqz7d1D9c8').AndReturn(application_mock)
 
     server.HTTPServer(application_mock).AndReturn(http_server_mock)
 
@@ -74,7 +74,7 @@ def test_can_handler_get():
     request_mock.supports_http_1_1().AndReturn(True)
 
     process_request_mock = mox.CreateMockAnything()
-    process_request_mock(**{'arg':'should-be-args'})
+    process_request_mock('GET',**{'arg':'should-be-args'})
 
     mox.ReplayAll()
 
@@ -99,7 +99,7 @@ def test_can_handler_post():
     request_mock.supports_http_1_1().AndReturn(True)
 
     process_request_mock = mox.CreateMockAnything()
-    process_request_mock(**{'arg':'should-be-args'})
+    process_request_mock('POST', **{'arg':'should-be-args'})
 
     mox.ReplayAll()
 

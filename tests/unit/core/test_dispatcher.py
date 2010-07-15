@@ -51,7 +51,7 @@ def test_can_be_get_mapper():
     dispatcher.settings.ROOT_URLS = 'unit.core.test_dispatcher'
 
     mapper_mock = mox.CreateMockAnything()
-    mapper_mock.connect('url_name', 'url_route', action='action', controller='module.controller')
+    mapper_mock.connect('url_name', 'url_route', action='action', controller='controller')
 
     dispatcher.Mapper().AndReturn(mapper_mock)
 
