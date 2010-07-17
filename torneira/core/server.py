@@ -67,14 +67,17 @@ class TorneiraHandler(RequestHandler):
                 controller.handler = self
 
                 action = match['action']
+                print action
                 if not action:
-                    action = {'GET':'index','POST':'create','PUT':'update','DELETE':'delete'}['method']			
-			
+                    action = {'GET':'index','POST':'create','PUT':'update','DELETE':'delete'}[method]
                 response = getattr(controller, action)(**self.prepared_arguments(match))
 
                 if not response: return
                 self.write(response)
 
+            except HTTPError, he:
+                logging.exception("Erro lancado")
+                raise he
             except Exception, e:
                 logging.exception("500 - Erro ao processar a requisicao %s" % e)
                 if settings.DEBUG:
