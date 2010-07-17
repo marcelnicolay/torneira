@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from xml.dom.minidom import getDOMImplementation
+from xml.dom.minidom import getDOMImplementation, parseString
 
 def element_from_dict(document, elRoot, data):
     for k, v in data.iteritems():
@@ -33,6 +33,19 @@ def element_from_dict(document, elRoot, data):
 
         elRoot.appendChild(elem)
 
+def dict_from_element(element, dic):
+    
+    if element.hasChildNodes():
+        for node in element.childNodes:
+            if node.nodeType == node.TEXT_NODE:
+                dic[element.nodeName] = node.nodeValue
+            else:
+                if node.hasChildNodes and len(node.childNodes) == 1 and node.childNodes[0].nodeType == node.TEXT_NODE:
+                    dic[node.nodeName] = node.childNodes[0].nodeValue
+                else:
+                    dic[node.nodeName] = dict_from_element(node, {})
+        
+    return dic
 
 def dumps(data):
     rootName, rootValue = data.items()[0]
@@ -44,3 +57,13 @@ def dumps(data):
     element_from_dict(document, rootNode,  rootValue)
 
     return document.toxml()
+
+def loads(data):
+    
+    document = parseString(data)
+    rootNode = document.documentElement
+    
+    dictionary = {}
+    dictionary[rootNode.nodeName] = dict_from_element(rootNode, {})
+    
+    return dictionary
