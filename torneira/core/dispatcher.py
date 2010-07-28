@@ -16,10 +16,12 @@ from torneira.core import Singleton
 import logging
 
 try:
-    import settings
+    import settings_local as settings
 except ImportError, ie:
-    logging.warn("Not found settings file, using settings default!")
-    import settings_default as settings
+    try:
+        import settings
+    except ImportError, ie:
+        import settings_default as settings
 
 class TorneiraDispatcher(Singleton):
 
