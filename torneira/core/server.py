@@ -40,10 +40,11 @@ class TorneiraServer(Daemon):
 
     def run(self):
 
+        cookie_secret = settings.COOKIE_SECRET if hasattr(settings, 'COOKIE_SECRET') else None
         application = Application([
             (r"/media/(.*)", StaticFileHandler, {"path": self.media_dir}),
             (r"/.*", TorneiraHandler)
-        ], cookie_secret=settings.COOKIE_SECRET)
+        ], cookie_secret=cookie_secret)
 
         http_server = HTTPServer(application)
         http_server.listen(self.port)

@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: torneira
-Version: 0.0.1
+Version: 0.1.2
 Summary: Torneira is a lightweight and rapid web framework build on top of Tornado
 Home-page: http://www.torneira.org
 Author: Marcel Nicolay
