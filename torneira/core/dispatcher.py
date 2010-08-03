@@ -55,5 +55,5 @@ class TorneiraDispatcher(Singleton):
         return self.__controllers__[ctrl_name]
 
 
-def url(route=None, controller=None, action="index", name=None):
+def url(route=None, controller=None, action=None, name=None):
     return [name, route, controller, action]

@@ -4,6 +4,8 @@ torneira.egg-info/PKG-INFO
 torneira.egg-info/SOURCES.txt
 torneira.egg-info/dependency_links.txt
 torneira.egg-info/top_level.txt
+torneira/cache/__init__.py
+torneira/cache/backend.py
 torneira/controller/__init__.py
 torneira/controller/base.py
 torneira/core/__init__.py
@@ -13,6 +15,7 @@ torneira/core/meta.py
 torneira/core/server.py
 torneira/core/settings_default.py
 torneira/helper/__init__.py
+torneira/helper/encoding.py
 torneira/helper/simplexml.py
 torneira/models/__init__.py
 torneira/models/base.py
