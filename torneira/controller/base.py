@@ -14,7 +14,7 @@
 
 from mako import exceptions
 from mako.lookup import *
-from torneira.helper import simplexml
+import simplexml
 
 import simplejson
 import logging
