@@ -13,6 +13,5 @@ torneira/core/meta.py
 torneira/core/server.py
 torneira/core/settings_default.py
 torneira/helper/__init__.py
-torneira/helper/simplexml.py
 torneira/models/__init__.py
 torneira/models/base.py
