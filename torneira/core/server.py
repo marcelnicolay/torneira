@@ -72,7 +72,7 @@ class TorneiraHandler(RequestHandler):
                 controller.handler = self
 
                 action = match['action']
-                print action
+
                 if not action:
                     action = {'GET':'index','POST':'create','PUT':'update','DELETE':'delete'}[method]
                 response = getattr(controller, action)(**self.prepared_arguments(match))
