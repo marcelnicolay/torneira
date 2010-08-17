@@ -23,15 +23,7 @@ from cStringIO import StringIO
 
 import re, logging, sys
 
-try:
-    import settings_local as settings
-    logging.debug("Using settings_local.py as settings")
-except ImportError, ie:
-    try:
-        import settings
-    except ImportError, ie:
-        logging.warn("Not found settings_local.py or settings.py file, using settings default!")
-        import settings_default as settings
+import settings_local as settings
 
 class TorneiraServer(Daemon):
 

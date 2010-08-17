@@ -15,10 +15,6 @@ torneira/core/meta.py
 torneira/core/server.py
 torneira/core/settings_default.py
 torneira/helper/__init__.py
-<<<<<<< HEAD
-=======
 torneira/helper/encoding.py
-torneira/helper/simplexml.py
->>>>>>> cache-support
 torneira/models/__init__.py
 torneira/models/base.py
