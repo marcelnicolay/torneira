@@ -60,9 +60,25 @@ class BaseController():
     def render_to_xml(self, data):
         self.handler.set_header("Content-Type", "text/xml; charset=UTF-8")
         return simplexml.dumps(data)
+    
+def render_to_extension(fn):
+    def render_to_extension_fn(self, *args, **kargs):
 
-    def render_to_extension(self, extension, data):
-        if extension == "xml":
-            return self.render_to_xml(data)
+        response = fn(self, *args, **kargs)
+        extension = kargs.get('extension')
+
+        if extension and extension == 'json':
+            return self.render_to_json(response)
+
+        elif extension and extension == 'jsonp':
+            self.handler.set_header("Content-Type", "application/javascript; charset=UTF-8")
+            callback = kargs.get('callback') if kargs.get('callback') else fn.__name__
+            return "%s(%s);" % (callback, simplejson.dumps(response))
+        
+        elif extension and extension == 'xml':
+            return self.render_to_xml(response)
+        
         else:
-            return self.render_to_json(data)
+            return response
+
+    return render_to_extension_fn

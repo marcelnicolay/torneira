@@ -1,5 +1,6 @@
-from torneira.controller.base import BaseController
+from torneira.controller.base import BaseController, render_to_extension
 
 __all__ = (
-	'BaseController'	
+	'BaseController',
+	'render_to_extension'	
 )
