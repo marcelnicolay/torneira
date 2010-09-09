@@ -27,7 +27,7 @@ except ImportError, ie:
         import settings
     except ImportError, ie:
         logging.warn("Not found settings_local.py or settings.py file, using settings default!")
-        import settings_default as settings
+        from torneira.core import settings_default as settings
 
 class BaseController():
 

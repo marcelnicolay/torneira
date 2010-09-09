@@ -49,8 +49,8 @@ class TorneiraDispatcher(Singleton):
         if not self.__controllers__:
             self.__controllers__ = {}
 
-	ctrl_name = controller.__name__
-	
+        ctrl_name = controller.__name__
+
         if not ctrl_name in self.__controllers__:
             self.__controllers__[ctrl_name] = controller()
 
