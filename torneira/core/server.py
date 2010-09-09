@@ -21,7 +21,7 @@ from torneira.core.dispatcher import TorneiraDispatcher
 import cProfile as profile
 from cStringIO import StringIO
 
-import re, logging, sys
+import re, logging, sys, functools
 
 try:
     import settings_local as settings
@@ -69,13 +69,16 @@ class TorneiraHandler(RequestHandler):
         if match:
             try:
                 controller = TorneiraDispatcher().getController(match['controller'])
-                controller.handler = self
 
                 action = match['action']
 
                 if not action:
-                    action = {'GET':'index','POST':'create','PUT':'update','DELETE':'delete'}[method]
-                response = getattr(controller, action)(**self.prepared_arguments(match))
+                    action = {'GET':'index','POST':'create','PUT':'update','DELETE':'delete'}.get(method, 'index')
+                    
+                karguments = self.prepared_arguments(match)
+                karguments['request_handler'] = self
+                
+                response = getattr(controller, action)(**karguments)
 
                 if not response: return
                 self.write(response)
@@ -142,3 +145,14 @@ class TorneiraHandler(RequestHandler):
 
         self.profiler.dump_stats(settings.PROFILE_FILE)
 
+def asynchronous(method):
+
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs):
+        handler = kwargs.get('handler')
+        if not handler:
+            raise Exception("@asynchronous require handler parameter")
+
+        handler._auto_finish = False
+        return method(self, *args, **kwargs)
+    return wrapper

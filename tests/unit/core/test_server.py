@@ -15,6 +15,7 @@
 from mox import Mox
 from torneira.core import server
 from tornado.web import HTTPError
+from tornado.httpserver import HTTPRequest
 from nose.tools import assert_equals, assert_raises
 
 def test_can_be_load_server():
@@ -170,18 +171,15 @@ def test_can_handler_profiling_post():
 def test_can_handler_process_request_match():
     mox = Mox()
 
-    mox = Mox()
-
     mox.StubOutWithMock(server, "TorneiraDispatcher", use_mock_anything=True)
 
     application_mock = mox.CreateMockAnything()
     application_mock.ui_methods = {}
     application_mock.ui_modules = {}
 
-    request_mock = mox.CreateMockAnything()
-    request_mock.uri = "/should-be-uri.html"
-    request_mock.supports_http_1_1().AndReturn(True)
-
+    request = HTTPRequest(method='GET', uri='/should-be-uri.html', headers={})
+    handler = server.TorneiraHandler(application_mock, request)
+    
     match_value = {'controller':'should-be-controller','action':'shouldBeAction'}
 
     prepared_arguments_mock = mox.CreateMockAnything()
@@ -189,9 +187,9 @@ def test_can_handler_process_request_match():
 
     mapper_mock = mox.CreateMockAnything()
     mapper_mock.match("/should-be-uri.html").AndReturn(match_value)
-
+    
     controller_mock = mox.CreateMockAnything()
-    controller_mock.shouldBeAction(arg='value').AndReturn("shoul-be-response")
+    controller_mock.shouldBeAction(arg='value', request_handler = handler).AndReturn("shoul-be-response")
 
     dispatcher_mock = mox.CreateMockAnything()
     dispatcher_mock.getMapper().AndReturn(mapper_mock)
@@ -206,7 +204,7 @@ def test_can_handler_process_request_match():
     mox.ReplayAll()
 
     try:
-        handler = server.TorneiraHandler(application_mock, request_mock)
+        
         handler.prepared_arguments = prepared_arguments_mock
         handler.write = write_mock
         handler.process_request()
