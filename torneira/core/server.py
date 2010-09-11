@@ -149,10 +149,10 @@ def asynchronous(method):
 
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
-        handler = kwargs.get('handler')
-        if not handler:
-            raise Exception("@asynchronous require handler parameter")
+        request_handler = kwargs.get('request_handler')
+        if not request_handler:
+            raise Exception("@asynchronous require request_handler parameter")
 
-        handler._auto_finish = False
+        request_handler._auto_finish = False
         return method(self, *args, **kwargs)
     return wrapper
