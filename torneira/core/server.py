@@ -18,20 +18,12 @@ from tornado.ioloop import IOLoop
 from torneira.controller import BaseController
 from torneira.core.daemon import Daemon
 from torneira.core.dispatcher import TorneiraDispatcher
+from torneira.settings import settings
+
 import cProfile as profile
 from cStringIO import StringIO
 
 import re, logging, sys, functools
-
-try:
-    import settings_local as settings
-    logging.debug("Using settings_local.py as settings")
-except ImportError, ie:
-    try:
-        import settings
-    except ImportError, ie:
-        logging.warn("Not found settings_local.py or settings.py file, using settings default!")
-        import settings_default as settings
 
 class TorneiraServer(Daemon):
 
