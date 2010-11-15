@@ -12,54 +12,54 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from mox import Mox
+import unittest, fudge
+
+from torneira.settings import settings
 from torneira.core import dispatcher
 
 urls = [("url_name", "url_route", "controller", "action")]
 
-def test_can_be_load_dispatcher():
-    mox = Mox()
+class DispatcherTestCase(unittest.TestCase):
 
-    mox.ReplayAll()
-    try:
-        _dispatcher = dispatcher.TorneiraDispatcher()
-        mox.VerifyAll()
-    finally:
-        mox.UnsetStubs()
+    def setUp(self):
+        settings.ROOT_URLS = "unit.core.test_dispatcher"
+    
+    def tearDown(self):
+        settings.ROOT_URLS = ""
+    
+    def test_can_be_get_urls(self):
+        dp = dispatcher.TorneiraDispatcher()
+        self.assertEqual(dp.getUrls(), urls)
+    
+    def test_can_be_get_mapper(self):
 
-def test_can_be_get_urls():
-    mox = Mox()
+        fudge.clear_expectations()
+        FakeMapper = fudge.Fake("Mapper").expects("__init__")
+        fake_instance = FakeMapper.returns_fake().expects('connect').with_args("url_name", "url_route", controller="controller", action="action")
+        
+        with fudge.patched_context(dispatcher, "Mapper", FakeMapper):
 
-    mox.StubOutWithMock(dispatcher, "settings", use_mock_anything=True)
-    dispatcher.settings.ROOT_URLS = 'unit.core.test_dispatcher'
+            dp = dispatcher.TorneiraDispatcher()
+            mapper = dp.getMapper()
+        
+        self.assertEqual(fake_instance, mapper)
+        fudge.clear_calls()
+    
+    def test_can_be_get_controller(self):
 
-    _dispatcher = dispatcher.TorneiraDispatcher()
+        fudge.clear_expectations()
+        controller = fudge.Fake().provides("__init__").has_attr(__name__="shouldBeName")
+        controller_intance = controller.returns_fake()
 
-    mox.ReplayAll()
-    try:
-        assert urls == _dispatcher.getUrls()
-        mox.VerifyAll()
-    finally:
-        mox.UnsetStubs()
+        dp = dispatcher.TorneiraDispatcher()
+        ctrl = dp.getController(controller)
 
-def test_can_be_get_mapper():
-    mox = Mox()
-
-    mox.StubOutWithMock(dispatcher, "settings", use_mock_anything=True)
-    mox.StubOutWithMock(dispatcher, "Mapper", use_mock_anything=True)
-
-    dispatcher.settings.ROOT_URLS = 'unit.core.test_dispatcher'
-
-    mapper_mock = mox.CreateMockAnything()
-    mapper_mock.connect('url_name', 'url_route', action='action', controller='controller')
-
-    dispatcher.Mapper().AndReturn(mapper_mock)
-
-    _dispatcher = dispatcher.TorneiraDispatcher()
-
-    mox.ReplayAll()
-    try:
-        assert mapper_mock == _dispatcher.getMapper()
-        mox.VerifyAll()
-    finally:
-        mox.UnsetStubs()
+        self.assertEqual(controller_intance, ctrl)
+        self.assertEqual(dp.__controllers__, {"shouldBeName":ctrl})
+        fudge.clear_calls()
+        
+    def test_can_be_create_url(self):
+        
+        url = dispatcher.url(route="shouldBeRoute", controller="shouldBeController", action="shouldBeAction", name="shouldBeName")
+        self.assertEqual(url, ['shouldBeName', 'shouldBeRoute', 'shouldBeController', 'shouldBeAction'])
+        
