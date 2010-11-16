@@ -151,3 +151,23 @@ class RequestHandlerTestCase(unittest.TestCase):
             handler.delete("shouldBeArgs", shouldBeNamedParam="value")
 
         settings.PROFILING = False
+        
+    def test_can_be_process_request(self):
+        
+        mapper_fake = fudge.Fake()
+        
+        FakeTorneiraDispatcher = fudge.Fake("TorneiraDispatcher").expects("__init__")
+        FakeTorneiraDispatcher.returns_fake().expects("getMapper").returns(mapper_fake)
+        
+        patches = [
+            fudge.patch_object(server, "TorneiraDispatcher", FakeTorneiraDispatcher),
+        ]
+
+        try:
+            handler = server.TorneiraHandler(self.application_fake, self.request_fake)
+            handler.process_request()
+        finally:
+            
+            for p in patches:
+                p.restore()
+        
