@@ -152,9 +152,9 @@ class RequestHandlerTestCase(unittest.TestCase):
 
         settings.PROFILING = False
         
-    def test_can_be_process_request(self):
+    def test_can_be_process_request_raise_404(self):
         
-        mapper_fake = fudge.Fake()
+        mapper_fake = fudge.Fake().expects("match").with_args("shouldBeUri")
         
         FakeTorneiraDispatcher = fudge.Fake("TorneiraDispatcher").expects("__init__")
         FakeTorneiraDispatcher.returns_fake().expects("getMapper").returns(mapper_fake)
@@ -165,9 +165,141 @@ class RequestHandlerTestCase(unittest.TestCase):
 
         try:
             handler = server.TorneiraHandler(self.application_fake, self.request_fake)
-            handler.process_request()
+            self.assertRaises(tornado.web.HTTPError, handler.process_request)
         finally:
             
             for p in patches:
                 p.restore()
+
+    def test_can_be_process_request_render_404_template(self):
+
+        settings.DEBUG = False
+        mapper_fake = fudge.Fake().expects("match").with_args("shouldBeUri")
+
+        FakeTorneiraDispatcher = fudge.Fake("TorneiraDispatcher").expects("__init__")
+        FakeTorneiraDispatcher.returns_fake().expects("getMapper").returns(mapper_fake)
+        FakeBaseController = fudge.Fake("BaseController").expects("__init__")
+        FakeBaseController.returns_fake().expects("render_to_template").with_args("/404.html").returns("shouldBeTemplate")
+
+        patches = [
+            fudge.patch_object(server, "TorneiraDispatcher", FakeTorneiraDispatcher),
+            fudge.patch_object(server, "BaseController", FakeBaseController),
+        ]
+
+        write_fake = fudge.Fake(callable=True).with_args("shouldBeTemplate")
+        
+        try:
+            handler = server.TorneiraHandler(self.application_fake, self.request_fake)
+            
+            with fudge.patched_context(handler, "write", write_fake):
+                handler.process_request()
+                
+        finally:
+
+            for p in patches:
+                p.restore() 
+        
+            settings.DEBUG = True               
+
+    def test_can_be_process_request_raise_500(self):
+
+        mapper_fake = fudge.Fake().expects("match").with_args("shouldBeUri").returns({"controller":"shouldBeController"})
+
+        FakeTorneiraDispatcher = fudge.Fake("TorneiraDispatcher").expects("__init__")
+        FakeTorneiraDispatcher.returns_fake().expects("getMapper").returns(mapper_fake).expects("getController").raises(ValueError())
+
+        patches = [
+            fudge.patch_object(server, "TorneiraDispatcher", FakeTorneiraDispatcher),
+        ]
+
+        try:
+            handler = server.TorneiraHandler(self.application_fake, self.request_fake)
+            self.assertRaises(tornado.web.HTTPError, handler.process_request)
+        finally:
+
+            for p in patches:
+                p.restore()
+
+    def test_can_be_process_request_render_500_template(self):
+
+        settings.DEBUG = False
+        mapper_fake = fudge.Fake().expects("match").with_args("shouldBeUri").returns({"controller":"shouldBeController"})
+
+        FakeTorneiraDispatcher = fudge.Fake("TorneiraDispatcher").expects("__init__")
+        FakeTorneiraDispatcher.returns_fake().expects("getMapper").returns(mapper_fake).expects("getController").raises(ValueError())
+
+        FakeBaseController = fudge.Fake("BaseController").expects("__init__")
+        FakeBaseController.returns_fake().expects("render_to_template").with_args("/500.html").returns("shouldBeTemplate")
+
+        patches = [
+            fudge.patch_object(server, "TorneiraDispatcher", FakeTorneiraDispatcher),
+            fudge.patch_object(server, "BaseController", FakeBaseController),
+        ]
+
+        write_fake = fudge.Fake(callable=True).with_args("shouldBeTemplate")
+
+        try:
+            handler = server.TorneiraHandler(self.application_fake, self.request_fake)
+
+            with fudge.patched_context(handler, "write", write_fake):
+                handler.process_request()
+
+        finally:
+
+            for p in patches:
+                p.restore() 
+
+            settings.DEBUG = True               
+
+    def test_can_be_process_request(self):
+
+        match = {
+            "controller":"shouldBecontroller", 
+            "action":"shouldBeAction"
+        }
+        
+        controller_fake = fudge.Fake().expects("shouldBeAction").returns("shouldBeResponse")
+        mapper_fake = fudge.Fake().expects("match").with_args("shouldBeUri").returns(match)
+
+        FakeTorneiraDispatcher = fudge.Fake("TorneiraDispatcher").expects("__init__")
+        FakeTorneiraDispatcher.returns_fake().expects("getMapper") \
+            .returns(mapper_fake) \
+            .expects("getController") \
+            .with_args("shouldBecontroller") \
+            .returns(controller_fake)
+
+        prepared_fake = fudge.Fake(callable=True).with_args(match).returns({'arg1':'value1'})
+        write_fake = fudge.Fake(callable=True).with_args("shouldBeResponse")
+        
+        handler = server.TorneiraHandler(self.application_fake, self.request_fake)
+        
+        patches = [
+            fudge.patch_object(server, "TorneiraDispatcher", FakeTorneiraDispatcher),
+            fudge.patch_object(handler, "prepared_arguments", prepared_fake),
+            fudge.patch_object(handler, "write", write_fake),
+        ]
+        
+
+        try:
+                
+            handler.process_request() 
+
+        finally:
+
+            for p in patches:
+                p.restore()
+        
+    def test_can_be_get_prepared_arguments(self):
+        
+        self.request_fake.has_attr( arguments = {'shouldBeArg':["shouldBeValue"]})
+        match = {
+            "controller":"shouldBeController",
+            "action":"shouldBeAction",
+            "shouldBeArg2":"shouldBeValue2"
+        }
+        
+        handler = server.TorneiraHandler(self.application_fake, self.request_fake)
+        arguments = handler.prepared_arguments(match)
+        
+        self.assertEqual(arguments, {'shouldBeArg2': 'shouldBeValue2', 'shouldBeArg': 'shouldBeValue'})
         
