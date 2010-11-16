@@ -16,13 +16,7 @@ import inspect, re, logging, hashlib
 from datetime import datetime
 from torneira.cache.backend import MemcachedClass, DummyClass, RedisClass
 
-try:
-    import settings_local as settings
-except ImportError, ie:
-    try:
-        import settings
-    except ImportError, ie:
-        import settings_default as settings
+from torneira import settings
 
 __cache__ = None
 def get_cache():
