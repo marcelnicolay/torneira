@@ -18,7 +18,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from sqlalchemy.orm.interfaces import SessionExtension
 
 from torneira.core import Singleton
-from torneira.settings import settings
+from torneira import settings
 
 import logging
 import time

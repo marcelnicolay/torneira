@@ -15,7 +15,7 @@ from routes import Mapper
 from torneira.core import Singleton
 import logging
 
-from torneira.settings import settings
+from torneira import settings
 
 class TorneiraDispatcher(Singleton):
 

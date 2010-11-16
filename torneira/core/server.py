@@ -18,7 +18,7 @@ from tornado.ioloop import IOLoop
 from torneira.controller import BaseController
 from torneira.core.daemon import Daemon
 from torneira.core.dispatcher import TorneiraDispatcher
-from torneira.settings import settings
+from torneira import settings
 
 import cProfile as profile
 from cStringIO import StringIO

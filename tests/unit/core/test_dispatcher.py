@@ -14,7 +14,7 @@
 
 import unittest, fudge
 
-from torneira.settings import settings
+from torneira import settings
 from torneira.core import dispatcher
 
 urls = [("url_name", "url_route", "controller", "action")]
