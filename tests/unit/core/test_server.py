@@ -59,3 +59,95 @@ class ServerTestCase(unittest.TestCase):
             for p in patches:
                 p.restore()
         
+class RequestHandlerTestCase(unittest.TestCase):
+    
+    def setUp(self):
+        fudge.clear_expectations()
+        fudge.clear_calls()
+        
+        self.application_fake = fudge.Fake().has_attr(ui_methods={}, ui_modules={})
+        self.request_fake = fudge.Fake().has_attr(uri="shouldBeUri").provides("supports_http_1_1").returns(True)
+        
+    def tearDown(self):
+        fudge.verify()
+        
+    def test_can_be_handler_get(self):
+                
+        handler = server.TorneiraHandler(self.application_fake, self.request_fake)
+        process_request_fake = fudge.Fake(callable=True).with_args('GET', "shouldBeArgs", shouldBeNamedParam="value")
+        
+        with fudge.patched_context(handler, "process_request", process_request_fake):
+        
+            handler.get("shouldBeArgs", shouldBeNamedParam="value")
+            
+    def test_can_be_handler_post(self):
+
+        handler = server.TorneiraHandler(self.application_fake, self.request_fake)
+        process_request_fake = fudge.Fake(callable=True).with_args('POST', "shouldBeArgs", shouldBeNamedParam="value")
+
+        with fudge.patched_context(handler, "process_request", process_request_fake):
+            handler.post("shouldBeArgs", shouldBeNamedParam="value")       
+            
+    def test_can_be_handler_put(self):
+
+        handler = server.TorneiraHandler(self.application_fake, self.request_fake)
+        process_request_fake = fudge.Fake(callable=True).with_args('PUT', "shouldBeArgs", shouldBeNamedParam="value")
+
+        with fudge.patched_context(handler, "process_request", process_request_fake):
+            handler.put("shouldBeArgs", shouldBeNamedParam="value")
+            
+    def test_can_be_handler_delete(self):
+        
+        handler = server.TorneiraHandler(self.application_fake, self.request_fake)
+        process_request_fake = fudge.Fake(callable=True).with_args('DELETE', "shouldBeArgs", shouldBeNamedParam="value")
+
+        with fudge.patched_context(handler, "process_request", process_request_fake):
+            handler.delete("shouldBeArgs", shouldBeNamedParam="value")
+
+    def test_can_be_handler_profiling_get(self):
+
+        settings.PROFILING = True
+        handler = server.TorneiraHandler(self.application_fake, self.request_fake)
+        profiling_fake = fudge.Fake(callable=True).with_args("shouldBeArgs", shouldBeNamedParam="value")
+
+        with fudge.patched_context(handler, "profiling", profiling_fake):
+
+            handler.get("shouldBeArgs", shouldBeNamedParam="value")
+
+        settings.PROFILING = False
+
+    def test_can_be_handler_profiling_post(self):
+
+        settings.PROFILING = True
+        handler = server.TorneiraHandler(self.application_fake, self.request_fake)
+        profiling_fake = fudge.Fake(callable=True).with_args("shouldBeArgs", shouldBeNamedParam="value")
+
+        with fudge.patched_context(handler, "profiling", profiling_fake):
+
+            handler.post("shouldBeArgs", shouldBeNamedParam="value")
+
+        settings.PROFILING = False
+
+    def test_can_be_handler_profiling_put(self):
+
+        settings.PROFILING = True
+        handler = server.TorneiraHandler(self.application_fake, self.request_fake)
+        profiling_fake = fudge.Fake(callable=True).with_args("shouldBeArgs", shouldBeNamedParam="value")
+
+        with fudge.patched_context(handler, "profiling", profiling_fake):
+
+            handler.put("shouldBeArgs", shouldBeNamedParam="value")
+
+        settings.PROFILING = False
+
+    def test_can_be_handler_profiling_delete(self):
+
+        settings.PROFILING = True
+        handler = server.TorneiraHandler(self.application_fake, self.request_fake)
+        profiling_fake = fudge.Fake(callable=True).with_args("shouldBeArgs", shouldBeNamedParam="value")
+
+        with fudge.patched_context(handler, "profiling", profiling_fake):
+
+            handler.delete("shouldBeArgs", shouldBeNamedParam="value")
+
+        settings.PROFILING = False
