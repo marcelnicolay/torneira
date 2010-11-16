@@ -20,10 +20,10 @@ setup(
     version = __version__,
     description = "Torneira is a lightweight and rapid web framework build on top of Tornado",
     long_description = """Torneira is a lightweight and rapid web framework build on top of Tornado""",
-    keywords = 'torneira tornado mako sqlalchemy',
+    keywords = ['torneira','tornado','mako', 'sqlalchemy'],
     author = 'Marcel Nicolay',
     author_email = 'marcel.nicolay@gmail.com',
-    url = 'http://www.torneira.org',
+    url = 'http://github.com/marcelnicolay/torneira',
     license = 'OSI',
     classifiers = ['Development Status :: 4 - Beta',
                    'Intended Audience :: Developers',
@@ -38,4 +38,5 @@ setup(
     packages = find_packages(),
     package_dir = {"torneira": "torneira"},
     include_package_data = True,
+    test_suite="nose.collector"
 )
