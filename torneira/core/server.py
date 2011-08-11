@@ -27,10 +27,11 @@ import re, logging, sys, functools
 
 class TorneiraServer(Daemon):
 
-    def __init__(self, pidfile, port, project_root, media_dir):
+    def __init__(self, pidfile, port, project_root, media_dir, xheaders=False):
         self.port = port
         self.project_root = project_root
         self.media_dir = media_dir
+        self.xheaders = xheaders
 
         return Daemon.__init__(self, pidfile)
 
@@ -42,7 +43,7 @@ class TorneiraServer(Daemon):
             (r"/.*", TorneiraHandler)
         ], cookie_secret=cookie_secret)
 
-        http_server = HTTPServer(application)
+        http_server = HTTPServer(application, xheaders=self.xheaders)
         http_server.listen(self.port)
 
         logging.info("Torneira Server START! listening port %s " % self.port)

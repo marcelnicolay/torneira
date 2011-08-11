@@ -32,7 +32,7 @@ class ServerTestCase(unittest.TestCase):
         
         application_instance = FakeApplication.returns_fake()
         
-        FakeServer = fudge.Fake("HTTPServer").expects("__init__").with_args(application_instance)
+        FakeServer = fudge.Fake("HTTPServer").expects("__init__").with_args(application_instance, xheaders="shouldBeXHeaders")
         server_instance = FakeServer.returns_fake().expects("listen").with_args("shouldBePort")
         
         FakeIOLoop = fudge.Fake("IOLoop").expects("instance")
@@ -45,7 +45,7 @@ class ServerTestCase(unittest.TestCase):
         ]
         
         try:
-            torneira_server = server.TorneiraServer("shouldBePidfile", "shouldBePort", "shouldBeRoot", "shouldBeMediaDir")
+            torneira_server = server.TorneiraServer("shouldBePidfile", "shouldBePort", "shouldBeRoot", "shouldBeMediaDir", xheaders="shouldBeXHeaders")
             
             self.assertEqual(torneira_server.pidfile, "shouldBePidfile")
             self.assertEqual(torneira_server.project_root, "shouldBeRoot")
