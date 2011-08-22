@@ -28,7 +28,7 @@ class ServerTestCase(unittest.TestCase):
         FakeApplication = fudge.Fake("Application").expects("__init__").with_args([
             (r"/media/(.*)", tornado.web.StaticFileHandler, {"path": "shouldBeMediaDir"}),
             (r"/.*", server.TorneiraHandler)
-        ], cookie_secret=settings.COOKIE_SECRET)
+        ], cookie_secret=settings.COOKIE_SECRET, debug=True)
         
         application_instance = FakeApplication.returns_fake()
         
