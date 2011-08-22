@@ -41,7 +41,7 @@ class TorneiraServer(Daemon):
         application = Application([
             (r"/media/(.*)", StaticFileHandler, {"path": self.media_dir}),
             (r"/.*", TorneiraHandler)
-        ], cookie_secret=cookie_secret)
+        ], cookie_secret=cookie_secret, debug=settings.DEBUG)
 
         http_server = HTTPServer(application, xheaders=self.xheaders)
         http_server.listen(self.port)
