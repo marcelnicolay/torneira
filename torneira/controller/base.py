@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from torneira import settings
+from routes.util import url_for
 
 from mako import exceptions
 from mako.lookup import *
@@ -31,7 +32,7 @@ class BaseController():
         try:
             template = lookup.get_template(template)
 
-            return template.render(**kw)
+            return template.render(url_for=url_for, **kw)
         except Exception, e:
             if settings.DEBUG:
                 return exceptions.html_error_template().render()
