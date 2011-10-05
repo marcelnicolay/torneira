@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from tornado import locale
 from torneira import settings
 from routes.util import url_for
 
@@ -29,10 +30,18 @@ class BaseController():
                                 output_encoding='utf-8',
                                 input_encoding='utf-8',
                                 default_filters=['decode.utf8'])
+
+        try:
+            locale_code = getattr(settings, 'LOCALE')
+        except AttributeError:
+            locale_code = 'en_US'
+            logging.warn("LOCALE not specified, using default '%s'" % locale_code)
+        user_locale = locale.get(locale_code)
+
         try:
             template = lookup.get_template(template)
 
-            return template.render(url_for=url_for, **kw)
+            return template.render(url_for=url_for, _=user_locale.translate, **kw)
         except Exception, e:
             if settings.DEBUG:
                 return exceptions.html_error_template().render()
