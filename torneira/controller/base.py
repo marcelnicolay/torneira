@@ -25,23 +25,37 @@ import logging
 
 class BaseController():
 
+    def get_translate(self):
+        """Retorna a função de tradução de strings
+
+        Utiliza a engine do tornado para fornecer a tradução de strings,
+        utilizando arquivo .mo (gettext)
+        """
+        if not hasattr(settings, 'LOCALE'):
+            return lambda s: s
+
+        assert settings.LOCALE.has_key('code')
+        assert settings.LOCALE.has_key('path')
+        assert settings.LOCALE.has_key('domain')
+
+        locale_code = settings.LOCALE['code']
+        locale.load_gettext_translations(settings.LOCALE['path'],
+                                         settings.LOCALE['domain'])
+        return locale.get(locale_code).translate
+
+
     def render_to_template(self, template, **kw):
         lookup = TemplateLookup(directories=settings.TEMPLATE_DIRS,
                                 output_encoding='utf-8',
                                 input_encoding='utf-8',
                                 default_filters=['decode.utf8'])
 
-        try:
-            locale_code = getattr(settings, 'LOCALE')
-        except AttributeError:
-            locale_code = 'en_US'
-            logging.warn("LOCALE not specified, using default '%s'" % locale_code)
-        user_locale = locale.get(locale_code)
+        translate = self.get_translate()
 
         try:
             template = lookup.get_template(template)
 
-            return template.render(url_for=url_for, _=user_locale.translate, **kw)
+            return template.render(url_for=url_for, _=translate, **kw)
         except Exception, e:
             if settings.DEBUG:
                 return exceptions.html_error_template().render()
