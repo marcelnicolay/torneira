@@ -11,8 +11,10 @@ Dependencies
  * Mako_ >= 0.3.2
  * SqlAlchemy_ >= 0.5.6
  * nose_ >= 0.11.0
- * mox_ >= 0.5.1
  * simplejson_
+ * simplexml_
+ * coverage_
+ * fudge_
 
 Installing
 ==========
@@ -38,7 +40,9 @@ With new features
 .. _Mako: http://www.makotemplates.org/
 .. _SqlAlchemy: http://www.sqlalchemy.org/
 .. _nose: http://code.google.com/p/python-nose/
-.. _mox: http://code.google.com/p/pymox/test
 .. _simplejson: http://code.google.com/p/simplejson/
+.. _simplexml: https://github.com/marcelnicolay/simplexml/
+.. _fudge: http://farmdev.com/projects/fudge/
+.. _coverage: http://pypi.python.org/pypi/coverage/
 
 E-mail: marcel.nicolay at gmail com
