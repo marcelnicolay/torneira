@@ -24,25 +24,30 @@ import simplejson
 import logging
 
 class BaseController():
+    _current_locale = None
 
-    def get_translate(self):
-        """Retorna a função de tradução de strings
+    def define_current_locale(self, locale_code):
+        self._current_locale = locale.get(locale_code)
 
-        Utiliza a engine do tornado para fornecer a tradução de strings,
-        utilizando arquivo .mo (gettext)
-        """
+    def setup_locale(self):
         if not hasattr(settings, 'LOCALE'):
-            return lambda s: s
+            return self.get_default_translate()
 
         assert settings.LOCALE.has_key('code')
         assert settings.LOCALE.has_key('path')
         assert settings.LOCALE.has_key('domain')
 
         locale_code = settings.LOCALE['code']
+        locale.set_default_locale(locale_code)
         locale.load_gettext_translations(settings.LOCALE['path'],
                                          settings.LOCALE['domain'])
-        return locale.get(locale_code).translate
+        self.define_current_locale(locale_code)
 
+    def get_translate(self):
+        if not self._current_locale:
+            return lambda s: s
+        else:
+            return self._current_locale.translate
 
     def render_to_template(self, template, **kw):
         lookup = TemplateLookup(directories=settings.TEMPLATE_DIRS,
