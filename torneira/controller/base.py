@@ -26,12 +26,15 @@ import logging
 class BaseController():
     _current_locale = None
 
+    def __init__(self):
+        self.setup_locale()
+
     def define_current_locale(self, locale_code):
         self._current_locale = locale.get(locale_code)
 
     def setup_locale(self):
         if not hasattr(settings, 'LOCALE'):
-            return self.get_default_translate()
+            return
 
         assert settings.LOCALE.has_key('code')
         assert settings.LOCALE.has_key('path')
