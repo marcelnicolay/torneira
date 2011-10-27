@@ -14,12 +14,42 @@
 
 import unittest, fudge
 
-from torneira import settings
 from torneira.controller import base
 
 class BaseControllerTestCase(unittest.TestCase):
-    
-    def test_can_be_render_to_template(self):
-        
-        base_ctrl = base.BaseController()
-        
+    def setUp(self):
+        fudge.clear_expectations()
+        fudge.clear_calls()
+
+    def tearDown(self):
+        fudge.verify()
+
+    def test_if_can_setup_tornado_locale_module(self):
+        """Tests if the torneira is setting up tornado.locale correctly"""
+
+        class settings_mock:
+            LOCALE = {
+                'code': 'pt_BR',
+                'path': 'locales/',
+                'domain': 'appname',
+            }
+
+        locale_mock = fudge.Fake().is_a_stub() \
+            .expects('set_default_locale') \
+            .with_args('pt_BR') \
+            .expects('load_gettext_translations') \
+            .with_args('locales/', 'appname')
+
+        base_controller = base.BaseController()
+        with fudge.patched_context(base, "settings", settings_mock):
+            with fudge.patched_context(base, 'locale', locale_mock):
+                base_controller.setup_locale()
+
+    def test_raise_assertexception_if_settings_locale_was_not_configured(self):
+        class settings_mock:
+            LOCALE = {}
+
+        base_controller = base.BaseController()
+        with fudge.patched_context(base, "settings", settings_mock):
+            with self.assertRaises(AssertionError):
+                base_controller.setup_locale()

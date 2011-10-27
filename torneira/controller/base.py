@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from tornado import locale
 from torneira import settings
 from routes.util import url_for
 
@@ -23,16 +24,46 @@ import simplejson
 import logging
 
 class BaseController(object):
+    _current_locale = None
+
+    def __init__(self):
+        self.setup_locale()
+
+    def define_current_locale(self, locale_code):
+        self._current_locale = locale.get(locale_code)
+
+    def setup_locale(self):
+        if not hasattr(settings, 'LOCALE'):
+            return
+
+        assert settings.LOCALE.has_key('code')
+        assert settings.LOCALE.has_key('path')
+        assert settings.LOCALE.has_key('domain')
+
+        locale_code = settings.LOCALE['code']
+        locale.set_default_locale(locale_code)
+        locale.load_gettext_translations(settings.LOCALE['path'],
+                                         settings.LOCALE['domain'])
+        self.define_current_locale(locale_code)
+
+    def get_translate(self):
+        if not self._current_locale:
+            return lambda s: s
+        else:
+            return self._current_locale.translate
 
     def render_to_template(self, template, **kw):
         lookup = TemplateLookup(directories=settings.TEMPLATE_DIRS,
                                 output_encoding='utf-8',
                                 input_encoding='utf-8',
                                 default_filters=['decode.utf8'])
+
+        translate = self.get_translate()
+
         try:
             template = lookup.get_template(template)
 
-            return template.render(url_for=url_for, **kw)
+            return template.render(url_for=url_for, _=translate, **kw)
         except Exception, e:
             if settings.DEBUG:
                 return exceptions.html_error_template().render()
