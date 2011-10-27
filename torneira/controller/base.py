@@ -22,7 +22,7 @@ import simplexml
 import simplejson
 import logging
 
-class BaseController():
+class BaseController(object):
 
     def render_to_template(self, template, **kw):
         lookup = TemplateLookup(directories=settings.TEMPLATE_DIRS,
