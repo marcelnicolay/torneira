@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import unittest, fudge
+import unittest2
+import fudge
 
 from torneira.controller import base
 
-class BaseControllerTestCase(unittest.TestCase):
+class BaseControllerTestCase(unittest2.TestCase):
     def setUp(self):
         fudge.clear_expectations()
         fudge.clear_calls()

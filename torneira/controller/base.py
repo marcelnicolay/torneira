@@ -32,10 +32,10 @@ class BaseController(object):
     def define_current_locale(self, locale_code):
         self._current_locale = locale.get(locale_code)
 
-    def setup_locale(self):
+    def setup_locale(self):        
         if not hasattr(settings, 'LOCALE'):
             return
-
+            
         assert settings.LOCALE.has_key('code')
         assert settings.LOCALE.has_key('path')
         assert settings.LOCALE.has_key('domain')
