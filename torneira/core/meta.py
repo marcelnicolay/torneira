@@ -42,6 +42,11 @@ class TorneiraSession(object):
 	def __new__(cls, *args, **kwarg):
 		if not cls._session:
 			engine = create_engine(settings.DATABASE_ENGINE, pool_size=settings.DATABASE_POOL_SIZE, pool_recycle=300, proxy=TimerProxy())
-			cls._session = scoped_session(sessionmaker(autocommit=True, autoflush=False, expire_on_commit=False, bind=engine))
+			
+			if hasattr(settings, 'SQLALCHEMY_QUERY_CLS'):
+			    cls._session = scoped_session(sessionmaker(autocommit=True, autoflush=False, expire_on_commit=False, query_cls=settings.SQLALCHEMY_QUERY_CLS, bind=engine))
+			else:
+			    cls._session = scoped_session(sessionmaker(autocommit=True, autoflush=False, expire_on_commit=False, bind=engine))
+			    
 		return cls._session
 
