@@ -65,6 +65,7 @@ def cache_key(instance, method, **kwarguments):
     
     return md5key, cachekey
 
+
 def cached_method(fn, *arguments, **kwarguments):
 
     if len(arguments) == 0 :
@@ -109,3 +110,43 @@ def cached_timeout(timeout):
         return cached_static_fn
     
     return cached
+
+try:
+    from tornado import gen
+except ImportError:
+    pass
+    
+def async_cached(timeout=None):
+    
+    def async_cached_fn(fn):
+
+        @gen.engine
+        def async_cached_wrapper(instance, callback, *arguments, **kwarguments):
+        
+            md5key, key = cache_key(instance, fn.__name__, **kwarguments)
+
+            logging.debug("verificando chave %s no cache no formato md5 %s  " % (key, md5key))
+            cache = get_cache()
+            result = cache.get(md5key)
+
+            if result is None:
+                result = yield gen.Task(fn, instance, *arguments, **kwarguments)
+                
+                cache.set(md5key, result, timeout)
+
+                logging.debug("SET IN CACHE %s" % result)
+            else:
+                logging.debug("GET FROM CACHE")
+
+            callback(result)
+
+        # hack for access decorated function
+        async_cached_wrapper.fn = fn
+        
+        return async_cached_wrapper
+        
+    return async_cached_fn
+        
+        
+        
+        

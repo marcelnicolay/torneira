@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from torneira.cache.extension import CachedQuery, CachedExtension
-from torneira.cache.util import get_cache, cache_key, cached, cached_timeout
+from torneira.cache.util import get_cache, cache_key, cached, cached_timeout, async_cached
 import logging
 
 __all__ = (
@@ -22,6 +22,7 @@ __all__ = (
     'get_cache',
     'cache_key',
     'cached',
-    'cached_timeout'
+    'cached_timeout',
+    'async_cached'
 )
 
