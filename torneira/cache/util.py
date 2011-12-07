@@ -148,5 +148,32 @@ def async_cached(timeout=None):
     return async_cached_fn
         
         
+'''
+    expire decorated method from cache
+'''
+def expire_key(method, **kw):
+    if method.__name__ not in ('cached_static_fn', 'async_cached_fn'):
+        raise ValueError("Somente metodos decorados com cached, podes ser expirados")
+
+    md5key, key = cache_key(method.im_class(), method.fn.__name__ , **kw)
+
+    cache = get_cache()
+    logging.debug("[CACHE][expire] - %s {%s}" % (md5key, key))
+
+    cache.delete(md5key)
+
+'''
+    set value as decorated method in cache
+'''
+def set_key(method, value, **kw):
+    if method.__name__ not in ('cached_static_fn', 'async_cached_fn'):
+        raise ValueError("Somente metodos decorados com cached, podes ser expirados")
+
+    md5key, key = cache_key(method.im_class(), method.fn.__name__ , **kw)
+
+    cache = get_cache()
+    logging.debug("[CACHE][set] - %s {%s}" % (md5key, key))
+
+    cache.set(md5key, value)
         
         
