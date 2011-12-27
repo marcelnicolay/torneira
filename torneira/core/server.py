@@ -120,6 +120,13 @@ class TorneiraHandler(RequestHandler):
         else:
             self.process_request('DELETE', *args, **kw)
 
+    def options(self, *args, **kw):
+        logging.debug("OPTIONS %s processing..." % self.request.uri)
+        if settings.PROFILING:
+            self.profiling(*args, **kw)
+        else:
+            self.process_request('OPTIONS', *args, **kw)
+
     def prepared_arguments(self, match):
         arguments = {}
         for arg,value in self.request.arguments.iteritems():
