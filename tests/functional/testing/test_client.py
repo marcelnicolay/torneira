@@ -36,7 +36,7 @@ class TestingClientTestCase(unittest2.TestCase):
         
         self.assertEquals(request.uri, "/should-be-url")
         self.assertEquals(request.method, "GET")
-       
+        
     def test_can_be_make_request_get(self):
 
         settings.ROOT_URLS = "functional.testing.test_client"

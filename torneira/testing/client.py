@@ -26,8 +26,6 @@ class TestingClient(object):
         cookie_secret = settings.COOKIE_SECRET if hasattr(settings, 'COOKIE_SECRET') else None
         application = Application([], cookie_secret=cookie_secret)
         
-        
-        
         handler = TestingHandler(application, request)
 
         try:
@@ -39,16 +37,16 @@ class TestingClient(object):
         
         return handler.response
         
-    def get(self, request):
+    def get(self, request, **kwargs):
         if isinstance(request, str):
-            request = self.create_request(uri=request, method='GET')
+            request = self.create_request(uri=request, method='GET', **kwargs)
 
         return self.make_request(request)
         
-    def post(self, request, data={}):
+    def post(self, request, data={}, **kwargs):
         
         if isinstance(request, str):
-            request = self.create_request(uri=request, method='POST', body=urllib.urlencode(data))
+            request = self.create_request(uri=request, method='POST', body=urllib.urlencode(data), **kwargs)
             
         return self.make_request(request)
         
