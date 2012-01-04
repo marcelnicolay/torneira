@@ -28,7 +28,7 @@ class TestingClient(object):
         
         
         
-        handler = TestingHandler(application, request, response=response)
+        handler = TestingHandler(application, request)
 
         try:
             handler.process_request(method=request.method)
@@ -67,7 +67,7 @@ class TestingResponse(object):
         
 class TestingHandler(TorneiraHandler):
     
-    def __init__(self, application, request, response, **kargs):
+    def __init__(self, application, request, **kargs):
         
         self.response = TestingResponse()
         
