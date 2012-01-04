@@ -1,7 +1,7 @@
 import unittest2
 
 from torneira import settings
-from torneira.testing import client
+from torneira.testing.client import TestingClient
 from torneira.core.server import asynchronous
 
 class TestController(object):
@@ -27,11 +27,11 @@ urls = [
     ("name", "/should-be-async-url", TestController, "should_be_async_method")
 ]
 
-class TorneiraClientTestCase(unittest2.TestCase):
+class TestingClientTestCase(unittest2.TestCase):
     
     def test_can_be_create_request(self):
         
-        torneira_client = client.TestingClient()
+        torneira_client = TestingClient()
         request = torneira_client.create_request(uri="/should-be-url", method="GET")
         
         self.assertEquals(request.uri, "/should-be-url")
@@ -41,7 +41,7 @@ class TorneiraClientTestCase(unittest2.TestCase):
 
         settings.ROOT_URLS = "functional.testing.test_client"
         
-        torneira_client = client.TestingClient()
+        torneira_client = TestingClient()
         
         response = torneira_client.get("/should-be-url")        
 
@@ -54,7 +54,7 @@ class TorneiraClientTestCase(unittest2.TestCase):
 
         settings.ROOT_URLS = "functional.testing.test_client"
 
-        torneira_client = client.TestingClient()
+        torneira_client = TestingClient()
 
         response = torneira_client.post("/should-be-post", {'should_be_parameter': 'ShouldBePostData'})        
 
@@ -67,7 +67,7 @@ class TorneiraClientTestCase(unittest2.TestCase):
 
         settings.ROOT_URLS = "functional.testing.test_client"
 
-        torneira_client = client.TestingClient()
+        torneira_client = TestingClient()
 
         response = torneira_client.get("/should-be-url-unknow")        
 
@@ -79,7 +79,7 @@ class TorneiraClientTestCase(unittest2.TestCase):
 
         settings.ROOT_URLS = "functional.testing.test_client"
 
-        torneira_client = client.TestingClient()
+        torneira_client = TestingClient()
 
         response = torneira_client.get("/should-be-url-error")        
 
@@ -91,7 +91,7 @@ class TorneiraClientTestCase(unittest2.TestCase):
 
         settings.ROOT_URLS = "functional.testing.test_client"
 
-        torneira_client = client.TestingClient()
+        torneira_client = TestingClient()
 
         response = torneira_client.get("/should-be-async-url")        
 
