@@ -9,10 +9,6 @@ import urllib
 
 class TestingClient(object):
     
-    def __init__(self):
-        
-        pass
-        
     def create_request(self, uri, method="GET", headers={}, body=None, remote_ip=None):
         request = HTTPRequest(uri=uri, method=method, headers=headers, body=body, remote_ip=remote_ip)
         
@@ -30,18 +26,18 @@ class TestingClient(object):
         cookie_secret = settings.COOKIE_SECRET if hasattr(settings, 'COOKIE_SECRET') else None
         application = Application([], cookie_secret=cookie_secret)
         
-        response = TestingResponse()
+        
         
         handler = TestingHandler(application, request, response=response)
 
         try:
             handler.process_request(method=request.method)
-            response.set_code(200)
+            handler.finish()
             
         except HTTPError, e:
-            response.set_code(e.status_code)
+            handler.response.set_code(e.status_code)
         
-        return response
+        return handler.response
         
     def get(self, request):
         if isinstance(request, str):
@@ -73,7 +69,8 @@ class TestingHandler(TorneiraHandler):
     
     def __init__(self, application, request, response, **kargs):
         
-        self.response = response        
+        self.response = TestingResponse()
+        
         del(request.connection)
         
         super(TestingHandler, self).__init__(application, request)

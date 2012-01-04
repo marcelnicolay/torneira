@@ -27,7 +27,6 @@ urls = [
     ("name", "/should-be-async-url", TestController, "should_be_async_method")
 ]
 
-
 class TorneiraClientTestCase(unittest2.TestCase):
     
     def test_can_be_create_request(self):
