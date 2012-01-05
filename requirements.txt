@@ -1,0 +1,11 @@
+Mako==0.5.0
+MarkupSafe==0.15
+Routes==1.12.3
+SQLAlchemy==0.7.4
+fudge==1.0.3
+nose==1.1.2
+simplejson==2.3.2
+https://github.com/marcelnicolay/simplexml/tarball/0.1.4
+tornado==2.1.1
+unittest2==0.5.1
+wsgiref==0.1.2
