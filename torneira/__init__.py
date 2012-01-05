@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-__version__ = '0.2.3'
+__version__ = '0.2.4'
 
 import logging
 
@@ -30,5 +30,5 @@ except ImportError, ie:
             DEBUG = True
             PROFILING = False
             COOKIE_SECRET = "29NbhyfgaA092ZkjMbNvCx06789jdA8iIlLqz7d1D9c8"
-        
+
 settings = settings
