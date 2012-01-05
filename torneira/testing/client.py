@@ -46,10 +46,30 @@ class TestingClient(object):
     def post(self, request, data={}, **kwargs):
         
         if isinstance(request, str):
-            request = self.create_request(uri=request, method='POST', body=urllib.urlencode(data), **kwargs)
+            request = self.create_request(uri=request, method='POST', body=TestingClient.parse_post_data(data), **kwargs)
             
         return self.make_request(request)
-        
+
+    @staticmethod
+    def parse_post_data(data):
+        if isinstance(data, dict):
+            data = TestingClient._convert_dict_to_tuple(data)
+        return urllib.urlencode(data)
+
+    @staticmethod
+    def _convert_dict_to_tuple(data):
+        """Converts params dict to tuple
+
+        This allows lists on each value.
+        """
+        tuples = []
+        for key, value in data.iteritems():
+            if isinstance(value, list):
+                for each_value in value:
+                    tuples.append((key, each_value))
+            else:
+                tuples.append((key, value))
+        return tuples
 
 class TestingResponse(object):
     
