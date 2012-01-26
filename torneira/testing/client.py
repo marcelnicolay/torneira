@@ -98,7 +98,7 @@ class TestingHandler(TorneiraHandler):
         self.response.write(body)
         
     def finish(self):
-        self.response.set_code(200)
+        self.response.set_code(self.get_status())
         if self.callback:
             print "finish callback"
             self.callback(self.response)

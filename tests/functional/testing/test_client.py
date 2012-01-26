@@ -14,6 +14,9 @@ class TestController(object):
         request_handler.write("should be async response")
         request_handler.finish()
 
+    def should_respect_status_code(self, request_handler):
+        request_handler.set_status(201)
+
     def should_be_method_error(self, request_handler):
         raise(ValueError())
 
@@ -24,7 +27,8 @@ urls = [
     ("name", "/should-be-url", TestController, "should_be_method"),
     ("name", "/should-be-post", TestController, "should_be_post_method"),
     ("name", "/should-be-url-error", TestController, "should_be_method_error"),
-    ("name", "/should-be-async-url", TestController, "should_be_async_method")
+    ("name", "/should-be-async-url", TestController, "should_be_async_method"),
+    ("name", "/should-respect-status-code", TestController, "should_respect_status_code")
 ]
 
 class TestingClientTestCase(unittest2.TestCase):
@@ -98,4 +102,12 @@ class TestingClientTestCase(unittest2.TestCase):
         self.assertEquals(response.body, "should be async response")
         self.assertEquals(response.code, 200)
 
+        settings.ROOT_URLS = ""
+
+    def test_should_respect_status_code(self):
+        settings.ROOT_URLS = "functional.testing.test_client"
+        client = TestingClient()
+        response = client.get('/should-respect-status-code')
+
+        self.assertEquals(response.code, 201)
         settings.ROOT_URLS = ""
