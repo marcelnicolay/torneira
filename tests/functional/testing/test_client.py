@@ -62,7 +62,7 @@ class TestingClientTestCase(unittest2.TestCase):
         self.assertEquals(response.code, 200)
 
         settings.ROOT_URLS = ""
-        
+
     def test_can_be_make_request_with_404_error(self):
 
         settings.ROOT_URLS = "functional.testing.test_client"

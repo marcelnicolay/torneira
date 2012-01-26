@@ -21,35 +21,55 @@ class TestingClient(object):
                         
         return request
     
-    def make_request(self, request):
+    def make_request(self, request, callback=None):
         
         cookie_secret = settings.COOKIE_SECRET if hasattr(settings, 'COOKIE_SECRET') else None
         application = Application([], cookie_secret=cookie_secret)
         
-        handler = TestingHandler(application, request)
+        handler = TestingHandler(application, request, callback=callback)
 
         try:
             handler.process_request(method=request.method)
-            handler.finish()
+            if not callback: handler.finish()
             
         except HTTPError, e:
             handler.response.set_code(e.status_code)
         
         return handler.response
         
-    def get(self, request, **kwargs):
+    def get(self, request, callback=None, **kwargs):
         if isinstance(request, str):
             request = self.create_request(uri=request, method='GET', **kwargs)
 
-        return self.make_request(request)
+        return self.make_request(request, callback=callback)
         
     def post(self, request, data={}, **kwargs):
         
         if isinstance(request, str):
-            request = self.create_request(uri=request, method='POST', body=urllib.urlencode(data), **kwargs)
+            request = self.create_request(uri=request, method='POST', body=TestingClient.parse_post_data(data), **kwargs)
             
         return self.make_request(request)
-        
+
+    @staticmethod
+    def parse_post_data(data):
+        if isinstance(data, dict):
+            data = TestingClient._convert_dict_to_tuple(data)
+        return urllib.urlencode(data)
+
+    @staticmethod
+    def _convert_dict_to_tuple(data):
+        """Converts params dict to tuple
+
+        This allows lists on each value.
+        """
+        tuples = []
+        for key, value in data.iteritems():
+            if isinstance(value, list):
+                for each_value in value:
+                    tuples.append((key, each_value))
+            else:
+                tuples.append((key, value))
+        return tuples
 
 class TestingResponse(object):
     
@@ -65,9 +85,10 @@ class TestingResponse(object):
         
 class TestingHandler(TorneiraHandler):
     
-    def __init__(self, application, request, **kargs):
+    def __init__(self, application, request, callback=None, **kargs):
         
         self.response = TestingResponse()
+        self.callback = callback
         
         del(request.connection)
         
@@ -78,3 +99,6 @@ class TestingHandler(TorneiraHandler):
         
     def finish(self):
         self.response.set_code(200)
+        if self.callback:
+            print "finish callback"
+            self.callback(self.response)
