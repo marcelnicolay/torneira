@@ -21,27 +21,27 @@ class TestingClient(object):
                         
         return request
     
-    def make_request(self, request):
+    def make_request(self, request, callback=None):
         
         cookie_secret = settings.COOKIE_SECRET if hasattr(settings, 'COOKIE_SECRET') else None
         application = Application([], cookie_secret=cookie_secret)
         
-        handler = TestingHandler(application, request)
+        handler = TestingHandler(application, request, callback=callback)
 
         try:
             handler.process_request(method=request.method)
-            handler.finish()
+            if not callback: handler.finish()
             
         except HTTPError, e:
             handler.response.set_code(e.status_code)
         
         return handler.response
         
-    def get(self, request, **kwargs):
+    def get(self, request, callback=None, **kwargs):
         if isinstance(request, str):
             request = self.create_request(uri=request, method='GET', **kwargs)
 
-        return self.make_request(request)
+        return self.make_request(request, callback=callback)
         
     def post(self, request, data={}, **kwargs):
         
@@ -85,9 +85,10 @@ class TestingResponse(object):
         
 class TestingHandler(TorneiraHandler):
     
-    def __init__(self, application, request, **kargs):
+    def __init__(self, application, request, callback=None, **kargs):
         
         self.response = TestingResponse()
+        self.callback = callback
         
         del(request.connection)
         
@@ -98,3 +99,6 @@ class TestingHandler(TorneiraHandler):
         
     def finish(self):
         self.response.set_code(200)
+        if self.callback:
+            print "finish callback"
+            self.callback(self.response)
