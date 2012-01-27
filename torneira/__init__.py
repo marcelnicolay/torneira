@@ -17,7 +17,15 @@
 
 __version__ = '0.2.4'
 
-class settings(object):
-    DEBUG = True
-    PROFILING = False
-    COOKIE_SECRET = ""
+try:
+    import settings_local as settings
+except ImportError, ie:
+    try:
+        import settings
+    except ImportError, ie:
+        class settings(object):
+            DEBUG = True
+            PROFILING = False
+            COOKIE_SECRET = "29NbhyfgaA092ZkjMbNvCx06789jdA8iIlLqz7d1D9c8"
+
+settings = settings
