@@ -17,18 +17,7 @@
 
 __version__ = '0.2.4'
 
-import logging
-
-try:
-    import settings_local as settings
-    logging.debug("Using settings_local.py as settings")
-except ImportError, ie:
-    try:
-        import settings
-    except ImportError, ie:
-        class settings(object):
-            DEBUG = True
-            PROFILING = False
-            COOKIE_SECRET = "29NbhyfgaA092ZkjMbNvCx06789jdA8iIlLqz7d1D9c8"
-
-settings = settings
+class settings(object):
+    DEBUG = True
+    PROFILING = False
+    COOKIE_SECRET = ""

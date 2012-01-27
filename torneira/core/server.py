@@ -27,9 +27,8 @@ import re, logging, sys, functools
 
 class TorneiraServer(Daemon):
 
-    def __init__(self, pidfile, port, project_root, media_dir, xheaders=False):
+    def __init__(self, pidfile, port, media_dir, xheaders=False):
         self.port = port
-        self.project_root = project_root
         self.media_dir = media_dir
         self.xheaders = xheaders
 

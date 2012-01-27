@@ -20,8 +20,9 @@ def run():
 
         if options.show_colors:
             CLI.show_colors()
-
-        Main(options).execute()
+            
+        Main().excecute()
+            
     except KeyboardInterrupt:
         cli.info_and_exit("\nExecution interrupted by user...")
     except Exception, e:

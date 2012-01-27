@@ -29,7 +29,7 @@ class CLI(object):
         self.__config_parser()
 
     def __config_parser(self):
-        self.__parser = OptionParser()
+        self.__parser = OptionParser(usage="usage: %prog [options] start")
 
         self.__parser.add_option("-s", "--settings",
                 dest="settings_file",
@@ -48,7 +48,7 @@ class CLI(object):
                 help="User a specific media dir. If not provided, will search for media dir in the current directory")
 
         self.__parser.add_option("-x", "--xheaders",
-                dest="xhearders",
+                dest="xheaders",
                 default=False,
                 action="store_true",
                 help="Turn extra headers parse on in tornado server. (default is false)")

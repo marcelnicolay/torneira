@@ -45,10 +45,9 @@ class ServerTestCase(unittest.TestCase):
         ]
         
         try:
-            torneira_server = server.TorneiraServer("shouldBePidfile", "shouldBePort", "shouldBeRoot", "shouldBeMediaDir", xheaders="shouldBeXHeaders")
+            torneira_server = server.TorneiraServer("shouldBePidfile", "shouldBePort", "shouldBeMediaDir", xheaders="shouldBeXHeaders")
             
             self.assertEqual(torneira_server.pidfile, "shouldBePidfile")
-            self.assertEqual(torneira_server.project_root, "shouldBeRoot")
             self.assertEqual(torneira_server.media_dir, "shouldBeMediaDir")
             
             torneira_server.run()
