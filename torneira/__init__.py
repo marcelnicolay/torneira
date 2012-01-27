@@ -26,6 +26,6 @@ except ImportError, ie:
         class settings(object):
             DEBUG = True
             PROFILING = False
-            COOKIE_SECRET = "29NbhyfgaA092ZkjMbNvCx06789jdA8iIlLqz7d1D9c8"
+            COOKIE_SECRET = ""
 
 settings = settings
