@@ -73,21 +73,26 @@ class TestingClient(object):
 
 class TestingResponse(object):
     
-    def __init__(self):
+    def __init__(self, request_handler):
         self.body = None
         self.code = None
-        
+        self._request_handler = request_handler
+
     def write(self, body):
         self.body = body
         
     def set_code(self, code):
         self.code = code
-        
+
+    @property
+    def headers(self):
+        return self._request_handler._headers
+
 class TestingHandler(TorneiraHandler):
     
     def __init__(self, application, request, callback=None, **kargs):
         
-        self.response = TestingResponse()
+        self.response = TestingResponse(self)
         self.callback = callback
         
         del(request.connection)
