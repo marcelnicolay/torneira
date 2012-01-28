@@ -1,4 +1,5 @@
 import torneira
+import logging
 
 from cli import CLI
 import os
@@ -12,7 +13,6 @@ class Main(object):
     def start(self, options, args):
         
         # set path
-        sys.path.insert(0, os.path.abspath(os.curdir))
         sys.path.insert(0, os.path.dirname(os.path.abspath(options.settings_file)))
         
         # set setting
@@ -44,4 +44,7 @@ class Main(object):
         (options, args) = self.cli.parse()
         
         if args and args[0] in ('start', 'stop', 'restart'):
-            self.start(options, args)
+            try:
+                self.start(options, args)
+            except Exception, e:
+                sys.stderr(e)
