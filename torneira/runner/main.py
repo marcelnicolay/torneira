@@ -1,5 +1,5 @@
 import torneira
-import logging
+import traceback
 
 from cli import CLI
 import os
@@ -17,7 +17,7 @@ class Main(object):
         
         # set setting
         exec("import %s as settings" % os.path.splitext(os.path.basename(options.settings_file))[0])
-        torneira.settings = settings 
+        torneira.settings = settings  
 
         from torneira.core.server import TorneiraServer
         server = TorneiraServer(
@@ -47,4 +47,4 @@ class Main(object):
             try:
                 self.start(options, args)
             except Exception, e:
-                sys.stderr(e)
+                traceback.print_exc(file=sys.stderr)
