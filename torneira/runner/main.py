@@ -13,6 +13,7 @@ class Main(object):
     def start(self, options, args):
         
         # set path
+        sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(options.settings_file)), ".."))
         sys.path.insert(0, os.path.dirname(os.path.abspath(options.settings_file)))
         
         # set setting
