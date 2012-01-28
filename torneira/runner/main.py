@@ -13,7 +13,7 @@ class Main(object):
         
         # set path
         sys.path.insert(0, os.path.abspath(os.curdir))
-        sys.path.insert(0, os.path.join(os.path.abspath(os.curdir), ".."))
+        sys.path.insert(0, os.path.dirname(os.path.abspath(options.settings_file)))
         
         # set setting
         exec("import %s as settings" % os.path.splitext(os.path.basename(options.settings_file))[0])
