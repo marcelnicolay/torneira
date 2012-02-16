@@ -20,16 +20,6 @@ I'm work in documentation and a demo application, to help people understand the 
 
 There is already an application for [demonstration](https://github.com/marcelnicolay/torneira/tree/master/demo)
 
-Dependencies
---------------------
-
- * [Tornado](http://www.tornadoweb.org/)
- * [Mako](http://www.makotemplates.org/)
- * [SqlAlchemy](http://www.sqlalchemy.org/)
- * [simplejson](http://code.google.com/p/simplejson/)
- * [simplexml](https://github.com/marcelnicolay/simplexml/)
- * [routes](http://routes.groovie.org)
-
 Installing
 -----------------
 
@@ -47,3 +37,13 @@ Issues
 ------
 
 Please report any issues via [github issues](https://github.com/marcelnicolay/torneira/issues)
+
+Dependencies
+--------------------
+
+ * [Tornado](http://www.tornadoweb.org/)
+ * [Mako](http://www.makotemplates.org/)
+ * [SqlAlchemy](http://www.sqlalchemy.org/)
+ * [simplejson](http://code.google.com/p/simplejson/)
+ * [simplexml](https://github.com/marcelnicolay/simplexml/)
+ * [routes](http://routes.groovie.org)
