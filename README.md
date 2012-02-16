@@ -12,7 +12,7 @@ In settings.py you'll put your settings, and in urls.py you'll put your routes.
 
 Install the latest version of torneira, go to your app directory and make:
 
-$ torneira -p8888 start
+$ torneira --port 8888 --settings settings.py start
 
 Torneira will be started at http://localhost:8888
 
