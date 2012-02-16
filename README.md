@@ -25,6 +25,28 @@ Installing
 
 pip install torneira
 
+Usage: torneira [options] start
+-------------------------
+
+Options:
+    -h, --help            show this help message and exit
+    -s SETTINGS_FILE, --settings=SETTINGS_FILE
+                        Use a specific settings file. If not provided, will
+                        search for 'settings_local.py' in the current
+                        directory.
+    -d, --daemon          Run torneira server as an daemon. (default is false)
+    -m MEDIA_DIR, --media=MEDIA_DIR, --media_dir=MEDIA_DIR
+                        User a specific media dir. If not provided, will
+                        search for media dir in the current directory
+    -x, --xheaders        Turn extra headers parse on in tornado server.
+                        (default is false)
+    -p PORT, --port=PORT  Use a specific port number. (default is 8080)
+    --pidfile=PIDFILE     Use a specific pidfile. If not provide, will create
+                        /tmp/torneira.pid
+    -v, --version         Displays torneira version and exit.
+    --color               Output with beautiful colors.
+
+
 Contributing
 --------------------
 
