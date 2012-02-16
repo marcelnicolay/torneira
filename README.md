@@ -16,7 +16,7 @@ $ torneira --port 8888 --settings settings.py start
 
 Torneira will be started at http://localhost:8888
 
-I'm work in documentation and a demo application, to help people understand the idea of torneira.
+I'm working in documentation and a demo application, to help people understand the idea of torneira.
 
 There is already an application for [demonstration](https://github.com/marcelnicolay/torneira/tree/master/demo)
 
