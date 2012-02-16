@@ -1,0 +1,6 @@
+tornado
+mako
+sqlalchemy
+routes
+https://github.com/marcelnicolay/simplexml/tarball/master
+simplejson
