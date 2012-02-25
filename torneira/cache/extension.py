@@ -27,6 +27,7 @@ class CachedQuery(Query):
         
         if type(id) == list:
             id = id[0]
+            
         cache_key = "%s.%s(%s)" % (obj.__module__, obj.__name__, id)
         
         logging.debug("CachedQuery -> generate key %s" % cache_key)
@@ -41,6 +42,12 @@ class CachedQuery(Query):
         
 #        logging.debug("%s.................................................." % datetime.now().strftime("%H:%M:%S:%f"))
         
+        try:
+            ident = long(ident)
+        except TypeError:
+            if type(ident) in (tuple, list):
+                ident = long(ident[0])
+                            
         key = mapper.identity_key_from_primary_key([ident])
         
         cacheobj = session.identity_map.get(key)
