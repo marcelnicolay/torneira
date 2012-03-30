@@ -5,7 +5,7 @@ SQLAlchemy==0.7.4
 coverage==3.5.1
 fudge==1.0.3
 nose==1.1.2
-simplejson==2.3.2
+simplejson==2.5.0
 https://github.com/marcelnicolay/simplexml/zipball/0.1.4
 tornado==2.1.1
 unittest2==0.5.1

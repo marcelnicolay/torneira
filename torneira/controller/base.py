@@ -20,8 +20,13 @@ from mako import exceptions
 from mako.lookup import *
 import simplexml
 
-import simplejson
 import logging
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 
 class BaseController(object):
     _current_locale = None
@@ -78,8 +83,13 @@ class BaseController(object):
         return self.render_to_json({"errors":"", "message":message}, **kw)
 
     def render_to_json(self, data, request_handler, **kw):
+        """
+        Deprecated.
+
+        Tornado already converts dict to json, so use RequestHandler.write instead.
+        """
         request_handler.set_header("Content-Type", "application/json; charset=UTF-8")
-        return simplejson.dumps(data)
+        return json.dumps(data)
 
     def render_to_xml(self, data, request_handler, **kw):
         request_handler.set_header("Content-Type", "text/xml; charset=UTF-8")
@@ -98,7 +108,7 @@ def render_to_extension(fn):
         elif extension and extension == 'jsonp':
             request_handler.set_header("Content-Type", "application/javascript; charset=UTF-8")
             callback = kargs.get('callback') if kargs.get('callback') else fn.__name__
-            return "%s(%s);" % (callback, simplejson.dumps(response))
+            return "%s(%s);" % (callback, json.dumps(response))
         
         elif extension and extension == 'xml':
             return self.render_to_xml(response, request_handler=request_handler)
