@@ -74,7 +74,7 @@ def force_unicode(s, encoding='utf-8', strings_only=False, errors='strict'):
             # SafeUnicode at the end.
             s = s.decode(encoding, errors)
     except UnicodeDecodeError, e:
-        raise CartolaUnicodeDecodeError(s, *e.args)
+        raise TorneiraUnicodeDecodeError(s, *e.args)
     return s
 
 def smart_str(s, encoding='utf-8', strings_only=False, errors='strict'):
