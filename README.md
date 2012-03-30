@@ -31,12 +31,10 @@ Usage torneira script
     torneira --help
 
 Contributing
---------------------
+------------
 
- 1. Create both unit and functional tests for your new feature
- 2. Do not let the coverage go down, 100% is the minimum.
- 3. Write properly documentation
- 4. Send-me a patch with: ``git format-patch``
+ Send a pull request (preferred) or patches using ``git format-patch``. Please,
+ write unit and/or functional tests for your new feature.
 
 Issues
 ------
