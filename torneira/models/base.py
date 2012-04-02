@@ -1,35 +1,35 @@
 # -*- coding: utf-8 -*-
- 
+#
 # Licensed under the Open Software License ("OSL") v. 3.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
- 
+#
 #     http://www.opensource.org/licenses/osl-3.0.php
- 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from sqlalchemy import MetaData, Column, Integer, Unicode
-from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
-from sqlalchemy.orm.interfaces import MapperExtension
-from sqlalchemy.orm.query import Query
-from sqlalchemy import Integer, DateTime
-from torneira.core.meta import TorneiraSession
+#
 import datetime
 
+from sqlalchemy import MetaData
+from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
+
+from torneira.core.meta import TorneiraSession
+
 metadata = MetaData()
-        
+
+
 class MetaBaseModel(DeclarativeMeta):
     def __init__(cls, classname, bases, dict_):
         return DeclarativeMeta.__init__(cls, classname, bases, dict_)
 
 Model = declarative_base(metadata=metadata, metaclass=MetaBaseModel)
 
+
 class Repository(object):
-    
     def as_dict(self):
         items = {}
         for attrname in dir(self):
@@ -45,7 +45,7 @@ class Repository(object):
                 items[attrname] = [x.as_dict() for x in attr]
 
         return items
-    
+
     @classmethod
     def get(cls, id):
         session = TorneiraSession()
@@ -62,11 +62,11 @@ class Repository(object):
         if limit:
             return session.query(cls).all()[limit[0]:limit[1]]
         return session.query(cls).all()
-    
+
     @classmethod
     def create(cls, **kwargs):
         instance = cls()
-        for k,v in kwargs.items():
+        for k, v in kwargs.items():
             setattr(instance, k, v)
 
         instance.save()
@@ -79,6 +79,6 @@ class Repository(object):
 
     def save(self):
         session = TorneiraSession()
-        if not self.id: 
+        if not self.id:
             session.add(self)
         session.flush()

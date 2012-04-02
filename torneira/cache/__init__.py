@@ -11,10 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from torneira.cache.extension import CachedQuery, CachedExtension
 from torneira.cache.util import get_cache, cache_key, cached, cached_timeout, async_cached
-import logging
 
 __all__ = (
     'CachedQuery',
@@ -25,4 +23,3 @@ __all__ = (
     'cached_timeout',
     'async_cached'
 )
-

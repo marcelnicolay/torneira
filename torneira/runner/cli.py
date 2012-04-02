@@ -1,5 +1,6 @@
-from optparse import OptionParser
 import sys
+from optparse import OptionParser
+
 
 class CLI(object):
 

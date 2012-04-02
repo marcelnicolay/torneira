@@ -1,13 +1,13 @@
-from getpass import getpass
 import codecs
 import sys
-import torneira
-
 from cli import CLI
 from main import Main
 
+import torneira
+
 # fixing print in non-utf8 terminals
 sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
+
 
 def run():
     cli = CLI()
@@ -20,9 +20,9 @@ def run():
 
         if options.show_colors:
             CLI.show_colors()
-            
+
         Main().excecute()
-            
+
     except KeyboardInterrupt:
         cli.info_and_exit("\nExecution interrupted by user...")
     except Exception, e:
