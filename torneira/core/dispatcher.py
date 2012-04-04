@@ -19,35 +19,40 @@ from torneira import settings
 
 class TorneiraDispatcher(Singleton):
 
-    __mapper__ = None
-    __controllers__ = None
-    __urls__ = None
-
+    def __init__(self):
+        self._mapper = None
+        self._controllers = None
+        self._urls = None
+        
     def getUrls(self):
-        if not self.__urls__:
+        if not self._urls:
             exec("from %s import urls" % settings.ROOT_URLS)
-            self.__urls__ = urls
-        return self.__urls__
+            self._urls = urls
+        return self._urls
 
     def getMapper(self):
-        if not self.__mapper__:
+        if not self._mapper:
             mapper = Mapper()
             for name, route, controller, action in self.getUrls():
                 mapper.connect(name, route, controller=controller, action=action)
-            self.__mapper__ = mapper
-        return self.__mapper__
+            self._mapper = mapper
+        return self._mapper
 
     def getController(self, controller):
-        if not self.__controllers__:
-            self.__controllers__ = {}
+        if not self._controllers:
+            self._controllers = {}
 
         ctrl_name = controller.__name__
 
-        if not ctrl_name in self.__controllers__:
-            self.__controllers__[ctrl_name] = controller()
+        if not ctrl_name in self._controllers:
+            self._controllers[ctrl_name] = controller()
 
-        return self.__controllers__[ctrl_name]
-
+        return self._controllers[ctrl_name]
+        
+    def reset(self):
+        self._mapper = None
+        self._controllers = None
+        self._urls = None
 
 def url(route=None, controller=None, action=None, name=None):
     return [name, route, controller, action]
