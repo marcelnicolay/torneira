@@ -54,6 +54,32 @@ class TestingClientTestCase(unittest2.TestCase):
         
         settings.ROOT_URLS = ""
         
+    def test_can_be_make_request_put(self):
+
+        settings.ROOT_URLS = "functional.testing.test_client"
+
+        torneira_client = TestingClient()
+
+        response = torneira_client.put("/should-be-url")        
+
+        self.assertEquals(response.body, "should be response")
+        self.assertEquals(response.code, 200)
+
+        settings.ROOT_URLS = ""
+
+    def test_can_be_make_request_delete(self):
+
+        settings.ROOT_URLS = "functional.testing.test_client"
+
+        torneira_client = TestingClient()
+
+        response = torneira_client.delete("/should-be-url")        
+
+        self.assertEquals(response.body, "should be response")
+        self.assertEquals(response.code, 200)
+
+        settings.ROOT_URLS = ""
+        
     def test_can_be_make_request_post(self):
 
         settings.ROOT_URLS = "functional.testing.test_client"
