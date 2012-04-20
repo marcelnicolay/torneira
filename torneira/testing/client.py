@@ -48,6 +48,18 @@ class TestingClient(object):
 
         return self.make_request(request, callback=callback)
 
+    def put(self, request, data={}, callback=None, **kwargs):
+        if isinstance(request, str):
+            request = self.create_request(uri=request, method='PUT', body=TestingClient.parse_post_data(data), **kwargs)
+
+        return self.make_request(request, callback=callback)
+
+    def delete(self, request, data={}, callback=None, **kwargs):
+        if isinstance(request, str):
+            request = self.create_request(uri=request, method='DELETE', body=TestingClient.parse_post_data(data), **kwargs)
+
+        return self.make_request(request, callback=callback)
+
     @staticmethod
     def parse_post_data(data):
         if isinstance(data, dict):

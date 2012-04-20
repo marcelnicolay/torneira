@@ -56,7 +56,7 @@ class DispatcherTestCase(unittest.TestCase):
         ctrl = dp.getController(controller)
 
         self.assertEqual(controller_intance, ctrl)
-        self.assertEqual(dp.__controllers__, {"shouldBeName":ctrl})
+        self.assertEqual(dp._controllers, {"shouldBeName":ctrl})
         fudge.clear_calls()
         
     def test_can_be_create_url(self):
