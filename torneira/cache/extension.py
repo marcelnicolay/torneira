@@ -31,8 +31,8 @@ class CachedQuery(Query):
             id = id[0]
 
         key_cache = "%s.%s(%s)" % (obj.__module__, obj.__name__, id)
-        logging.debug("CachedQuery -> generate key %s" % cache_key)
-        return hashlib.md5(cache_key).hexdigest(), key_cache
+        logging.debug("CachedQuery -> generate key %s" % key_cache)
+        return hashlib.md5(key_cache).hexdigest(), key_cache
 
     def get(self, ident, **kw):
         mapper = self._mapper_zero()
