@@ -146,7 +146,7 @@ def expire_key(method, **kw):
     '''
     expire decorated method from cache
     '''
-    if method.__name__ not in ('cached_static_fn', 'async_cached_wrapper'):
+    if method.__name__ not in ('cached_static_fn', 'async_cached_wrapper', 'cached'):
         raise ValueError("Somente metodos decorados com cached, podes ser expirados")
 
     md5key, key = cache_key(method.im_self or method.im_class(), method.fn.__name__, **kw)
@@ -161,7 +161,7 @@ def set_key(method, value, **kw):
     '''
     set value as decorated method in cache
     '''
-    if method.__name__ not in ('cached_static_fn', 'async_cached_wrapper'):
+    if method.__name__ not in ('cached_static_fn', 'async_cached_wrapper', 'cached'):
         raise ValueError("Somente metodos decorados com cached, podes ser expirados")
 
     md5key, key = cache_key(method.im_self or method.im_class(), method.fn.__name__, **kw)
