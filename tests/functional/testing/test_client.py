@@ -1,27 +1,27 @@
 # coding: utf-8
 from tornado.web import asynchronous
 from torneira import settings
-from torneira.core.server import TorneiraHandler
+from torneira.controller.base import BaseController
 from torneira.testing.testcase import TestCase
 
 
-class TestController(TorneiraHandler):
+class TestController(BaseController):
 
-    def should_be_method(self):
+    def should_be_method(self, request_handler):
         return "should be response"
 
     @asynchronous
-    def should_be_async_method(self):
+    def should_be_async_method(self, request_handler):
         self.write("should be async response")
         self.finish()
 
-    def should_respect_status_code(self):
+    def should_respect_status_code(self, request_handler):
         self.set_status(201)
 
-    def should_be_method_error(self):
+    def should_be_method_error(self, request_handler):
         raise(ValueError())
 
-    def should_be_post_method(self, should_be_parameter):
+    def should_be_post_method(self, request_handler, should_be_parameter, **kw):
         return "should be response --- " + should_be_parameter
 
 urls = [

@@ -10,9 +10,11 @@ class HomeController(BaseController):
         super(HomeController, self).initialize(*args, **kwargs)
         self._teste = 'WORKS! ;)'
 
-    def index(self):
-        #return "Torneira v%s" % __version__
+    def index(self, request_handler):
         return self.render_to_template("home.html", version=__version__)
 
-    def custom(self):
+    def json_service(self, request_handler):
+        return {'torneira': {'version': __version__}}
+
+    def custom(self, request_handler):
         return "%s - Torneira v%s" % (self._teste, __version__)

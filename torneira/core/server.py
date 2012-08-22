@@ -70,6 +70,8 @@ class TorneiraHandler(RequestHandler):
         else:
             method_name = default_actions.get(method, 'index')
         method_callable = getattr(self, method_name)
+        # Deprecated: backwards compatibility
+        kwargs['request_handler'] = self
         return method_callable(*args, **kwargs)
 
     def get(self, *args, **kw):
@@ -77,7 +79,7 @@ class TorneiraHandler(RequestHandler):
             self.profiling(*args, **kw)
         else:
             response = self.process_request('GET', *args, **kw)
-            if isinstance(response, str) or isinstance(response, unicode):
+            if response:
                 self.write(response)
 
     def post(self, *args, **kw):
