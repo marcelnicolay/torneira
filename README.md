@@ -48,6 +48,5 @@ Dependencies
  * [Mako](http://www.makotemplates.org/)
  * [SqlAlchemy](http://www.sqlalchemy.org/)
  * [simplexml](https://github.com/marcelnicolay/simplexml/)
- * [routes](http://routes.groovie.org)
 
  On Python 2.5, [simplejson](http://code.google.com/p/simplejson/).
