@@ -14,10 +14,10 @@
 
 from tornado import locale
 from torneira import settings
-from routes.util import url_for
+from torneira.core.server import TorneiraHandler
 
 from mako import exceptions
-from mako.lookup import *
+from mako.lookup import TemplateLookup
 import simplexml
 
 import logging
@@ -28,10 +28,11 @@ except ImportError:
     import simplejson as json
 
 
-class BaseController(object):
+class BaseController(TorneiraHandler):
     _current_locale = None
 
-    def __init__(self):
+    def initialize(self, *args, **kwargs):
+        super(BaseController, self).initialize(*args, **kwargs)
         self.setup_locale()
 
     def define_current_locale(self, locale_code):
@@ -68,7 +69,7 @@ class BaseController(object):
         try:
             template = lookup.get_template(template)
 
-            return template.render(url_for=url_for, _=translate, **kw)
+            return template.render(url_for=self.reverse_url, _=translate, **kw)
         except Exception, e:
             if settings.DEBUG:
                 return exceptions.html_error_template().render()

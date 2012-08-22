@@ -1,6 +1,7 @@
-from torneira.core.dispatcher import url
 from controller.home import HomeController
+from tornado.web import url
 
 urls = (
-    url(r"/", HomeController, name="home-index"),
+    url(r"/custom/?", HomeController, dict(action='custom')),
+    url(r"/.*", HomeController),
 )

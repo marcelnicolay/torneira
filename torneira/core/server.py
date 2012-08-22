@@ -12,18 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import re
 import logging
-import functools
 import cProfile as profile
 
-from tornado.httpserver import HTTPServer
-from tornado.web import Application, StaticFileHandler, RequestHandler, HTTPError
+from tornado.web import Application, StaticFileHandler, RequestHandler, URLSpec
 from tornado.ioloop import IOLoop
 
-from torneira.controller import BaseController
 from torneira.core.daemon import Daemon
-from torneira.core.dispatcher import TorneiraDispatcher
 from torneira import settings
 
 
@@ -33,19 +28,23 @@ class TorneiraServer(Daemon):
         self.port = port
         self.media_dir = media_dir
         self.xheaders = xheaders
+        self.urls = self._get_urls()
 
         return Daemon.__init__(self, pidfile)
+
+    def _get_urls(self):
+        _imported = __import__(settings.ROOT_URLS, globals(), locals(), ['urls'], -1)
+        return _imported.urls
 
     def run(self):
 
         cookie_secret = settings.COOKIE_SECRET if hasattr(settings, 'COOKIE_SECRET') else None
-        application = Application([
-            (r"/media/(.*)", StaticFileHandler, {"path": self.media_dir}),
-            (r"/.*", TorneiraHandler)
-        ], cookie_secret=cookie_secret, debug=settings.DEBUG)
+        static_url = URLSpec(r"/media/(.*)", StaticFileHandler, {"path": self.media_dir}),
+        urls = static_url + self.urls
+        application = Application(urls, cookie_secret=cookie_secret,
+                debug=settings.DEBUG, xheaders=self.xheaders)
 
-        http_server = HTTPServer(application, xheaders=self.xheaders)
-        http_server.listen(self.port)
+        application.listen(self.port)
 
         logging.info("Torneira Server START! listening port %s " % self.port)
 
@@ -53,53 +52,33 @@ class TorneiraServer(Daemon):
 
 
 class TorneiraHandler(RequestHandler):
+    _action = None
 
-    def process_request(self, method='GET', *args, **kargs):
-        mapper = TorneiraDispatcher().getMapper()
+    def initialize(self, action=None):
+        self._action = action
 
-        # remove get args
-        uri = re.sub("\?.*", "", self.request.uri)
+    def process_request(self, method='GET', *args, **kwargs):
+        default_actions = {
+            'GET': 'index',
+            'POST': 'create',
+            'PUT': 'update',
+            'DELETE': 'delete'
+        }
 
-        match = mapper.match(uri)
-        if match:
-            try:
-                controller = TorneiraDispatcher().getController(match['controller'])
-
-                action = match['action']
-
-                if not action:
-                    action = {'GET': 'index', 'POST': 'create', 'PUT': 'update', 'DELETE': 'delete'}.get(method, 'index')
-
-                karguments = self.prepared_arguments(match)
-                karguments['request_handler'] = self
-
-                response = getattr(controller, action)(**karguments)
-
-                if not response:
-                    return
-                self.write(response)
-            except HTTPError, he:
-                logging.exception("Erro lancado")
-                raise he
-            except Exception, e:
-                logging.exception("500 - Erro ao processar a requisicao %s" % e)
-                if settings.DEBUG:
-                    raise HTTPError(500)
-                else:
-                    self.write(BaseController().render_to_template("/500.html"))
+        if self._action:
+            method_name = self._action
         else:
-            logging.exception("404 - Pagina nao encontrada %s" % self.request.uri)
-            if settings.DEBUG:
-                raise HTTPError(404)
-            else:
-                self.write(BaseController().render_to_template("/404.html"))
+            method_name = default_actions.get(method, 'index')
+        method_callable = getattr(self, method_name)
+        return method_callable(*args, **kwargs)
 
     def get(self, *args, **kw):
-        logging.debug("GET %s processing..." % self.request.uri)
         if settings.PROFILING:
             self.profiling(*args, **kw)
         else:
-            self.process_request('GET', *args, **kw)
+            response = self.process_request('GET', *args, **kw)
+            if isinstance(response, str) or isinstance(response, unicode):
+                self.write(response)
 
     def post(self, *args, **kw):
         logging.debug("POST %s processing..." % self.request.uri)
@@ -146,15 +125,3 @@ class TorneiraHandler(RequestHandler):
         self.profiler.runcall(self.process_request, *args, **kw)
 
         self.profiler.dump_stats(settings.PROFILE_FILE)
-
-
-def asynchronous(method):
-    @functools.wraps(method)
-    def wrapper(self, *args, **kwargs):
-        request_handler = kwargs.get('request_handler')
-        if not request_handler:
-            raise Exception("@asynchronous require request_handler parameter")
-
-        request_handler._auto_finish = False
-        return method(self, *args, **kwargs)
-    return wrapper
