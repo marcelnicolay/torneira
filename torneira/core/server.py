@@ -56,52 +56,89 @@ class TorneiraHandler(RequestHandler):
 
     def initialize(self, action=None):
         self._action = action
+        self.setup_locale()
+
+    def define_current_locale(self, locale_code):
+        self._current_locale = locale.get(locale_code)
+
+    def setup_locale(self):        
+        if not hasattr(settings, 'LOCALE'):
+            return
+            
+        assert settings.LOCALE.has_key('code')
+        assert settings.LOCALE.has_key('path')
+        assert settings.LOCALE.has_key('domain')
+
+        locale_code = settings.LOCALE['code']
+        locale.set_default_locale(locale_code)
+        locale.load_gettext_translations(settings.LOCALE['path'],
+                                         settings.LOCALE['domain'])
+        self.define_current_locale(locale_code)
+
+    def get_translate(self):
+        if not self._current_locale:
+            return lambda s: s
+        else:
+            return self._current_locale.translate
 
     def process_request(self, method='GET', *args, **kwargs):
         if not self._action:
             raise HTTPError(500, 'Misconfigured server: action not informed')
 
         method_callable = getattr(self, self._action)
-        return method_callable(*args, **kwargs)
+        if settings.PROFILING:
+            return self.profiling(method_callable, *args, **kwargs)
+        else:
+            return method_callable(*args, **kwargs)
 
     def get(self, *args, **kw):
-        if settings.PROFILING:
-            self.profiling(*args, **kw)
-        else:
-            response = self.process_request('GET', *args, **kw)
-            if response:
-                self.write(response)
+        response = self.process_request('GET', *args, **kw)
+        if response:
+            self.write(response)
 
     def post(self, *args, **kw):
         logging.debug("POST %s processing..." % self.request.uri)
-        if settings.PROFILING:
-            self.profiling(*args, **kw)
-        else:
-            response = self.process_request('POST', *args, **kw)
-            if response:
-                self.write(response)
+        response = self.process_request('POST', *args, **kw)
+        if response:
+            self.write(response)
 
     def put(self, *args, **kw):
         logging.debug("PUT %s processing..." % self.request.uri)
-        if settings.PROFILING:
-            self.profiling(*args, **kw)
-        else:
-            response = self.process_request('PUT', *args, **kw)
-            if response:
-                self.write(response)
+        response = self.process_request('PUT', *args, **kw)
+        if response:
+            self.write(response)
 
     def delete(self, *args, **kw):
         logging.debug("DELETE %s processing..." % self.request.uri)
-        if settings.PROFILING:
-            self.profiling(*args, **kw)
-        else:
-            response = self.process_request('DELETE', *args, **kw)
-            if response:
-                self.write(response)
+        response = self.process_request('DELETE', *args, **kw)
+        if response:
+            self.write(response)
 
-    def profiling(self, *args, **kw):
+    def profiling(self, method, *args, **kw):
         self.profiler = profile.Profile()
-
-        self.profiler.runcall(self.process_request, *args, **kw)
-
+        output = self.profiler.runcall(method, *args, **kw)
         self.profiler.dump_stats(settings.PROFILE_FILE)
+        return output
+
+    def render_to_template(self, template, **kw):
+        lookup = TemplateLookup(directories=settings.TEMPLATE_DIRS,
+                                output_encoding='utf-8',
+                                input_encoding='utf-8',
+                                default_filters=['decode.utf8'])
+
+        translate = self.get_translate()
+
+        try:
+            template = lookup.get_template(template)
+
+            return template.render(url_for=self.reverse_url, _=translate, **kw)
+        except Exception, e:
+            if settings.DEBUG:
+                return exceptions.html_error_template().render()
+            else:
+                logging.exception("Erro ao renderizar o template!")
+                raise e
+
+    def render_to_xml(self, data, request_handler, **kw):
+        request_handler.set_header("Content-Type", "text/xml; charset=UTF-8")
+        return simplexml.dumps(data)
