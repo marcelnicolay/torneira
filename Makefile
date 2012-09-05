@@ -2,8 +2,8 @@
 
 clean:
 	echo "Cleaning up build and *.pyc files..."
-	find . -name '*.pyc' -exec rm -rf {} \;
-	rm -rf build
+	find . -name '*.pyc' -exec rm -f {} \;
+	rm -rf build torneira.egg-info dist
 
 unit: clean
 	echo "Running torneira unit tests..."
