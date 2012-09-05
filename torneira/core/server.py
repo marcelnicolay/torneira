@@ -15,7 +15,7 @@
 import logging
 import cProfile as profile
 
-from tornado.web import Application, StaticFileHandler, RequestHandler, URLSpec
+from tornado.web import Application, HTTPError, StaticFileHandler, RequestHandler, URLSpec
 from tornado.ioloop import IOLoop
 
 from torneira.core.daemon import Daemon
@@ -58,20 +58,10 @@ class TorneiraHandler(RequestHandler):
         self._action = action
 
     def process_request(self, method='GET', *args, **kwargs):
-        default_actions = {
-            'GET': 'index',
-            'POST': 'create',
-            'PUT': 'update',
-            'DELETE': 'delete'
-        }
+        if not self._action:
+            raise HTTPError(500, 'Misconfigured server: action not informed')
 
-        if self._action:
-            method_name = self._action
-        else:
-            method_name = default_actions.get(method, 'index')
-        method_callable = getattr(self, method_name)
-        # Deprecated: backwards compatibility
-        kwargs['request_handler'] = self
+        method_callable = getattr(self, self._action)
         return method_callable(*args, **kwargs)
 
     def get(self, *args, **kw):

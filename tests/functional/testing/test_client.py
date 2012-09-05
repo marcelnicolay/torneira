@@ -7,21 +7,21 @@ from torneira.testing.testcase import TestCase
 
 class TestController(BaseController):
 
-    def should_be_method(self, request_handler):
+    def should_be_method(self):
         return "should be response"
 
     @asynchronous
-    def should_be_async_method(self, request_handler):
+    def should_be_async_method(self):
         self.write("should be async response")
         self.finish()
 
-    def should_respect_status_code(self, request_handler):
+    def should_respect_status_code(self):
         self.set_status(201)
 
-    def should_be_method_error(self, request_handler):
+    def should_be_method_error(self):
         raise(ValueError())
 
-    def should_be_post_method(self, request_handler, should_be_parameter, **kw):
+    def should_be_post_method(self, should_be_parameter, **kw):
         return "should be response --- " + should_be_parameter
 
 urls = [
