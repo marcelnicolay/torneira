@@ -83,15 +83,6 @@ class BaseController(TorneiraHandler):
     def render_success(self, message="Operação realizada com sucesso!", **kw):
         return self.render_to_json({"errors":"", "message":message}, **kw)
 
-    def render_to_json(self, data, request_handler, **kw):
-        """
-        Deprecated.
-
-        Tornado already converts dict to json, so use RequestHandler.write instead.
-        """
-        request_handler.set_header("Content-Type", "application/json; charset=UTF-8")
-        return json.dumps(data)
-
     def render_to_xml(self, data, request_handler, **kw):
         request_handler.set_header("Content-Type", "text/xml; charset=UTF-8")
         return simplexml.dumps(data)
