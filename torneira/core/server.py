@@ -99,17 +99,6 @@ class TorneiraHandler(RequestHandler):
             if response:
                 self.write(response)
 
-    def prepared_arguments(self, match):
-        arguments = {}
-        for arg, value in self.request.arguments.iteritems():
-            arguments[arg] = value[0]
-
-        for key, value in match.iteritems():
-            if key not in ('controller', 'action'):
-                arguments[key] = value
-
-        return arguments
-
     def profiling(self, *args, **kw):
         self.profiler = profile.Profile()
 
