@@ -77,12 +77,6 @@ class BaseController(TorneiraHandler):
                 logging.exception("Erro ao renderizar o template!")
                 raise e
 
-    def render_error(self, message="Ops! Ocorreu um erro!", **kw):
-        return self.render_to_json({"errors":{"error":{"message": message}}}, **kw)
-
-    def render_success(self, message="Operação realizada com sucesso!", **kw):
-        return self.render_to_json({"errors":"", "message":message}, **kw)
-
     def render_to_xml(self, data, request_handler, **kw):
         request_handler.set_header("Content-Type", "text/xml; charset=UTF-8")
         return simplexml.dumps(data)
