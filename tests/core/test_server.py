@@ -58,7 +58,8 @@ class ServerTestCase(unittest.TestCase):
             
             for p in patches:
                 p.restore()
-        
+
+
 class RequestHandlerTestCase(unittest.TestCase):
     
     def setUp(self):

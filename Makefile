@@ -5,15 +5,8 @@ clean:
 	find . -name '*.pyc' -exec rm -f {} \;
 	rm -rf build torneira.egg-info dist
 
-unit: clean
-	echo "Running torneira unit tests..."
-	PYTHONPATH=`pwd`:`pwd`/torneira:$PYTHONPATH \
-		nosetests -s --verbose --with-coverage --cover-package=torneira tests/unit/*
-
-functional: clean
-	echo "Running torneira functional tests..."
-	PYTHONPATH=`pwd`:`pwd`/torneira:$PYTHONPATH \
-		nosetests -s --verbose --with-coverage --cover-package=torneira tests/functional/*
+test: clean
+	PYTHONPATH=`pwd`:`pwd`/torneira nosetests tests/*
 
 ci_requirements:
 	/home/quatix/virtualenv/torneira/bin/pip install -r `pwd`/requirements.txt

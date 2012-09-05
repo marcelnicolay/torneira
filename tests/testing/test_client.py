@@ -1,11 +1,11 @@
 # coding: utf-8
 from tornado.web import asynchronous
 from torneira import settings
-from torneira.controller.base import BaseController
+from torneira.core.server import TorneiraHandler
 from torneira.testing.testcase import TestCase
 
 
-class TestController(BaseController):
+class TestController(TorneiraHandler):
 
     def should_be_method(self):
         return "should be response"
