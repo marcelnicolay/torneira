@@ -77,28 +77,27 @@ class TorneiraHandler(RequestHandler):
         if settings.PROFILING:
             self.profiling(*args, **kw)
         else:
-            self.process_request('POST', *args, **kw)
+            response = self.process_request('POST', *args, **kw)
+            if response:
+                self.write(response)
 
     def put(self, *args, **kw):
         logging.debug("PUT %s processing..." % self.request.uri)
         if settings.PROFILING:
             self.profiling(*args, **kw)
         else:
-            self.process_request('PUT', *args, **kw)
+            response = self.process_request('PUT', *args, **kw)
+            if response:
+                self.write(response)
 
     def delete(self, *args, **kw):
         logging.debug("DELETE %s processing..." % self.request.uri)
         if settings.PROFILING:
             self.profiling(*args, **kw)
         else:
-            self.process_request('DELETE', *args, **kw)
-
-    def options(self, *args, **kw):
-        logging.debug("OPTIONS %s processing..." % self.request.uri)
-        if settings.PROFILING:
-            self.profiling(*args, **kw)
-        else:
-            self.process_request('OPTIONS', *args, **kw)
+            response = self.process_request('DELETE', *args, **kw)
+            if response:
+                self.write(response)
 
     def prepared_arguments(self, match):
         arguments = {}
