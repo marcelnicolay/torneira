@@ -302,23 +302,3 @@ class RequestHandlerTestCase(unittest.TestCase):
         arguments = handler.prepared_arguments(match)
         
         self.assertEqual(arguments, {'shouldBeArg2': 'shouldBeValue2', 'shouldBeArg': 'shouldBeValue'})
-        
-class AsynchronousTestCase(unittest.TestCase):
-    
-    def test_can_raise_exception_with_no_handler(self):
-        
-        method_fake = fudge.Fake(callable=True).has_attr(__name__="method_fake")
-        wrapper = server.asynchronous(method_fake)
-        
-        self.assertRaises(Exception, wrapper, None)
-        
-    def test_can_be_asynchronous_method(self):
-
-        request_handler_fake = fudge.Fake()
-        method_fake = fudge.Fake(callable=True).has_attr(__name__="method_fake").with_args(None, request_handler=request_handler_fake)
-
-        wrapper = server.asynchronous(method_fake)
-        wrapper(None, request_handler=request_handler_fake)
-        
-        self.assertEqual(request_handler_fake._auto_finish, False)
-    
