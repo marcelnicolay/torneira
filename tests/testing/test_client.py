@@ -31,7 +31,7 @@ urls = [
     ("/should-be-async-url", TestController, dict(action="should_be_async_method")),
     ("/should-respect-status-code", TestController, dict(action="should_respect_status_code"))
 ]
-settings.ROOT_URLS = "functional.testing.test_client"
+settings.ROOT_URLS = "testing.test_client"
 
 
 class TestingClientTestCase(TestCase):
@@ -52,7 +52,7 @@ class TestingClientTestCase(TestCase):
 
     def test_can_be_make_request_put(self):
         return
-        settings.ROOT_URLS = "functional.testing.test_client"
+        settings.ROOT_URLS = "testing.test_client"
 
         torneira_client = TestingClient()
 
@@ -65,7 +65,7 @@ class TestingClientTestCase(TestCase):
 
     def test_can_be_make_request_delete(self):
         return
-        settings.ROOT_URLS = "functional.testing.test_client"
+        settings.ROOT_URLS = "testing.test_client"
 
         torneira_client = TestingClient()
 
@@ -78,7 +78,7 @@ class TestingClientTestCase(TestCase):
         
     def test_can_be_make_request_post(self):
         return
-        settings.ROOT_URLS = "functional.testing.test_client"
+        settings.ROOT_URLS = "testing.test_client"
 
         torneira_client = TestingClient()
 
@@ -91,7 +91,7 @@ class TestingClientTestCase(TestCase):
 
     def test_can_be_make_request_with_404_error(self):
         return
-        settings.ROOT_URLS = "functional.testing.test_client"
+        settings.ROOT_URLS = "testing.test_client"
 
         torneira_client = TestingClient()
 
@@ -103,7 +103,7 @@ class TestingClientTestCase(TestCase):
 
     def test_can_be_make_request_with_500_error(self):
         return
-        settings.ROOT_URLS = "functional.testing.test_client"
+        settings.ROOT_URLS = "testing.test_client"
 
         torneira_client = TestingClient()
 
@@ -115,7 +115,7 @@ class TestingClientTestCase(TestCase):
         
     def test_can_be_make_async_request(self):
         return
-        settings.ROOT_URLS = "functional.testing.test_client"
+        settings.ROOT_URLS = "testing.test_client"
 
         torneira_client = TestingClient()
 
@@ -128,7 +128,7 @@ class TestingClientTestCase(TestCase):
 
     def test_should_respect_status_code(self):
         return
-        settings.ROOT_URLS = "functional.testing.test_client"
+        settings.ROOT_URLS = "testing.test_client"
         client = TestingClient()
         response = client.get('/should-respect-status-code')
 

@@ -13,9 +13,8 @@
 # limitations under the License.
 #
 import logging
-import cProfile as profile
 
-from tornado.web import Application, HTTPError, StaticFileHandler, RequestHandler, URLSpec
+from tornado.web import Application, StaticFileHandler, URLSpec
 from tornado.ioloop import IOLoop
 
 from torneira.core.daemon import Daemon
@@ -51,7 +50,7 @@ class TorneiraServer(Daemon):
         IOLoop.instance().start()
 
 
-class TorneiraHandler(RequestHandler):
+class TorneiraHandler(object):
     _action = None
 
     def initialize(self, action=None):
@@ -80,65 +79,3 @@ class TorneiraHandler(RequestHandler):
             return lambda s: s
         else:
             return self._current_locale.translate
-
-    def process_request(self, method='GET', *args, **kwargs):
-        if not self._action:
-            raise HTTPError(500, 'Misconfigured server: action not informed')
-
-        method_callable = getattr(self, self._action)
-        if settings.PROFILING:
-            return self.profiling(method_callable, *args, **kwargs)
-        else:
-            return method_callable(*args, **kwargs)
-
-    def get(self, *args, **kw):
-        response = self.process_request('GET', *args, **kw)
-        if response:
-            self.write(response)
-
-    def post(self, *args, **kw):
-        logging.debug("POST %s processing..." % self.request.uri)
-        response = self.process_request('POST', *args, **kw)
-        if response:
-            self.write(response)
-
-    def put(self, *args, **kw):
-        logging.debug("PUT %s processing..." % self.request.uri)
-        response = self.process_request('PUT', *args, **kw)
-        if response:
-            self.write(response)
-
-    def delete(self, *args, **kw):
-        logging.debug("DELETE %s processing..." % self.request.uri)
-        response = self.process_request('DELETE', *args, **kw)
-        if response:
-            self.write(response)
-
-    def profiling(self, method, *args, **kw):
-        self.profiler = profile.Profile()
-        output = self.profiler.runcall(method, *args, **kw)
-        self.profiler.dump_stats(settings.PROFILE_FILE)
-        return output
-
-    def render_to_template(self, template, **kw):
-        lookup = TemplateLookup(directories=settings.TEMPLATE_DIRS,
-                                output_encoding='utf-8',
-                                input_encoding='utf-8',
-                                default_filters=['decode.utf8'])
-
-        translate = self.get_translate()
-
-        try:
-            template = lookup.get_template(template)
-
-            return template.render(url_for=self.reverse_url, _=translate, **kw)
-        except Exception, e:
-            if settings.DEBUG:
-                return exceptions.html_error_template().render()
-            else:
-                logging.exception("Erro ao renderizar o template!")
-                raise e
-
-    def render_to_xml(self, data, request_handler, **kw):
-        request_handler.set_header("Content-Type", "text/xml; charset=UTF-8")
-        return simplexml.dumps(data)

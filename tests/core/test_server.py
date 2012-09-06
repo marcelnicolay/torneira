@@ -13,11 +13,13 @@
 # limitations under the License.
 from __future__ import with_statement
 
-import unittest, fudge
+import fudge
+import unittest
 
 from torneira import settings
 from torneira.core import server
 import tornado.web
+
 
 class ServerTestCase(unittest.TestCase):
     
@@ -34,7 +36,7 @@ class ServerTestCase(unittest.TestCase):
         application_instance = FakeApplication.returns_fake()
         
         FakeServer = fudge.Fake("HTTPServer").expects("__init__").with_args(application_instance, xheaders="shouldBeXHeaders")
-        server_instance = FakeServer.returns_fake().expects("listen").with_args("shouldBePort")
+        FakeServer.returns_fake().expects("listen").with_args("shouldBePort")
         
         FakeIOLoop = fudge.Fake("IOLoop").expects("instance")
         FakeIOLoop.returns_fake().expects("start")
@@ -58,78 +60,3 @@ class ServerTestCase(unittest.TestCase):
             
             for p in patches:
                 p.restore()
-
-
-class RequestHandlerTestCase(unittest.TestCase):
-    
-    def setUp(self):
-        fudge.clear_expectations()
-        fudge.clear_calls()
-        
-        self.application_fake = fudge.Fake().has_attr(ui_methods={}, ui_modules={})
-        self.request_fake = fudge.Fake().has_attr(uri="shouldBeUri").provides("supports_http_1_1").returns(True)
-        
-    def tearDown(self):
-        fudge.verify()
-        
-    def test_can_be_handler_profiling_get(self):
-
-        settings.PROFILING = True
-        handler = server.TorneiraHandler(self.application_fake, self.request_fake)
-        profiling_fake = fudge.Fake(callable=True).with_args("shouldBeArgs", shouldBeNamedParam="value")
-
-        with fudge.patched_context(handler, "profiling", profiling_fake):
-
-            handler.get("shouldBeArgs", shouldBeNamedParam="value")
-
-        settings.PROFILING = False
-
-    def test_can_be_handler_profiling_post(self):
-
-        settings.PROFILING = True
-        handler = server.TorneiraHandler(self.application_fake, self.request_fake)
-        profiling_fake = fudge.Fake(callable=True).with_args("shouldBeArgs", shouldBeNamedParam="value")
-
-        with fudge.patched_context(handler, "profiling", profiling_fake):
-
-            handler.post("shouldBeArgs", shouldBeNamedParam="value")
-
-        settings.PROFILING = False
-
-    def test_can_be_handler_profiling_put(self):
-
-        settings.PROFILING = True
-        handler = server.TorneiraHandler(self.application_fake, self.request_fake)
-        profiling_fake = fudge.Fake(callable=True).with_args("shouldBeArgs", shouldBeNamedParam="value")
-
-        with fudge.patched_context(handler, "profiling", profiling_fake):
-
-            handler.put("shouldBeArgs", shouldBeNamedParam="value")
-
-        settings.PROFILING = False
-
-    def test_can_be_handler_profiling_delete(self):
-
-        settings.PROFILING = True
-        handler = server.TorneiraHandler(self.application_fake, self.request_fake)
-        profiling_fake = fudge.Fake(callable=True).with_args("shouldBeArgs", shouldBeNamedParam="value")
-
-        with fudge.patched_context(handler, "profiling", profiling_fake):
-
-            handler.delete("shouldBeArgs", shouldBeNamedParam="value")
-
-        settings.PROFILING = False
-
-    def test_can_be_get_prepared_arguments(self):
-        
-        self.request_fake.has_attr( arguments = {'shouldBeArg':["shouldBeValue"]})
-        match = {
-            "controller":"shouldBeController",
-            "action":"shouldBeAction",
-            "shouldBeArg2":"shouldBeValue2"
-        }
-        
-        handler = server.TorneiraHandler(self.application_fake, self.request_fake)
-        arguments = handler.prepared_arguments(match)
-        
-        self.assertEqual(arguments, {'shouldBeArg2': 'shouldBeValue2', 'shouldBeArg': 'shouldBeValue'})
