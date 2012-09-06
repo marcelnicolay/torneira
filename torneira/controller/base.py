@@ -17,6 +17,31 @@ try:
 except ImportError:
     import simplejson as json
 
+from torneira.handler import TorneiraHandler
+from torneira.template import MakoMixin
+
+
+class BaseController(TorneiraHandler, MakoMixin):
+    def _process_request(self, *args, **kwargs):
+        kwargs['request_handler'] = self
+        super(BaseController, self)._process_request(*args, **kwargs)
+
+    def _prepare_arguments_for_kwargs(self):
+        # There is a bug in this design: if only one argument is received, we
+        # don't know if this needs to be a list or a single value. This
+        # implementation assumes that you will want a single value, for
+        # compatibility.
+        arguments = {}
+        for key in self.request.arguments.iterkeys():
+            values = self.get_arguments(key)
+            arguments[key] = values[0] if len(values) == 1 else values
+
+        return arguments
+
+    def post(self, *args, **kwargs):
+        kwargs.update(self._prepare_arguments_for_kwargs())
+        super(BaseController, self).post(*args, **kwargs)
+
 
 def render_to_extension(fn):
     def render_to_extension_fn(self, *args, **kargs):

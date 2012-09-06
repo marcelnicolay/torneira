@@ -11,47 +11,63 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from __future__ import with_statement
+import urllib
+try:
+    # Python >= 2.6
+    from urlparse import parse_qs
+except ImportError:
+    from cgi import parse_qs
 
-import unittest2
-import fudge
+from tornado.testing import AsyncHTTPTestCase
+from tornado.web import Application, url
 
-from torneira.controller import base
+from torneira.controller import BaseController
 
-class BaseControllerTestCase(unittest2.TestCase):
-    def setUp(self):
-        fudge.clear_expectations()
-        fudge.clear_calls()
 
-    def tearDown(self):
-        fudge.verify()
+class SimpleController(BaseController):
+    def index(self, *args, **kwargs):
+        if 'request_handler' in kwargs:
+            response = 'request_handler received'
+        else:
+            response = 'request_handler not received'
+        return response
 
-    def test_if_can_setup_tornado_locale_module(self):
-        """Tests if the torneira is setting up tornado.locale correctly"""
+    def post_data(self, request_handler, *args, **kwargs):
+        response = []
+        for key, value in kwargs.iteritems():
+            if type(value) == list:
+                for v in value:
+                    response.append((key, v))
+            else:
+                response.append((key, value))
+        return urllib.urlencode(response)
 
-        class settings_mock:
-            LOCALE = {
-                'code': 'pt_BR',
-                'path': 'locales/',
-                'domain': 'appname',
-            }
 
-        locale_mock = fudge.Fake().is_a_stub() \
-            .expects('set_default_locale') \
-            .with_args('pt_BR') \
-            .expects('load_gettext_translations') \
-            .with_args('locales/', 'appname')
+urls = (
+    url(r'/controller/simple/', SimpleController, {'action': 'index'}),
+    url(r'/controller/post-data/', SimpleController, {'action': 'post_data'}),
+)
+app = Application(urls, cookie_secret='secret')
 
-        base_controller = base.BaseController()
-        with fudge.patched_context(base, "settings", settings_mock):
-            with fudge.patched_context(base, 'locale', locale_mock):
-                base_controller.setup_locale()
 
-    def test_raise_assertexception_if_settings_locale_was_not_configured(self):
-        class settings_mock:
-            LOCALE = {}
+class BaseControllerTestCase(AsyncHTTPTestCase):
+    def get_app(self):
+        return app
 
-        base_controller = base.BaseController()
-        with fudge.patched_context(base, "settings", settings_mock):
-            with self.assertRaises(AssertionError):
-                base_controller.setup_locale()
+    def test_controller_method_must_receive_request_handler_as_kwarg(self):
+        response = self.fetch('/controller/simple/')
+        self.assertEqual(response.code, 200)
+        self.assertEqual(response.body, 'request_handler received')
+
+    def test_post_data_should_be_received_in_kwargs(self):
+        post_data = (
+            ('a_list', 1),
+            ('a_list', 2),
+            ('a_list', 3),
+            ('single_value', 'value'),
+            ('another_single_value', 'value 2'),
+        )
+        post_body = urllib.urlencode(post_data)
+        response = self.fetch('/controller/post-data/', method='POST', body=post_body)
+        self.assertEqual(response.code, 200)
+        self.assertEqual(parse_qs(response.body), parse_qs(post_body))
