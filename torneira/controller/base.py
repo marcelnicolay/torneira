@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import functools
 try:
     import json
 except ImportError:
     import simplejson as json
 
+import simplexml
 from torneira.handler import TorneiraHandler
 from torneira.template import MakoMixin
 
@@ -42,26 +44,37 @@ class BaseController(TorneiraHandler, MakoMixin):
         kwargs.update(self._prepare_arguments_for_kwargs())
         super(BaseController, self).post(*args, **kwargs)
 
+    def render_to_json(self, data, request_handler=None, **kwargs):
+        self.set_header("Content-Type", "application/json; charset=UTF-8")
+        return json.dumps(data)
+
+    def render_to_xml(self, data, request_handler=None, **kw):
+        self.set_header("Content-Type", "text/xml; charset=UTF-8")
+        return simplexml.dumps(data)
+
+    def render_error(self, message="Ops! Ocorreu um erro!", **kw):
+        return self.render_to_json({"errors": {"error": {"message": message}}}, **kw)
+
+    def render_success(self, message="Operação realizada com sucesso!", **kw):
+        return self.render_to_json({"errors": "", "message": message}, **kw)
+
 
 def render_to_extension(fn):
-    def render_to_extension_fn(self, *args, **kargs):
+    @functools.wraps(fn)
+    def wrapped(self, *args, **kwargs):
+        response = fn(self, *args, **kwargs)
 
-        response = fn(self, *args, **kargs)
-        extension = kargs.get('extension')
-        request_handler = kargs.get('request_handler')
-
-        if extension and extension == 'json':
-            return self.render_to_json(response, request_handler=request_handler)
-
-        elif extension and extension == 'jsonp':
-            request_handler.set_header("Content-Type", "application/javascript; charset=UTF-8")
-            callback = kargs.get('callback') if kargs.get('callback') else fn.__name__
-            return "%s(%s);" % (callback, json.dumps(response))
-        
-        elif extension and extension == 'xml':
-            return self.render_to_xml(response, request_handler=request_handler)
-        
-        else:
+        extension = kwargs.get('extension')
+        if not extension:
             return response
 
-    return render_to_extension_fn
+        if extension == 'json':
+            return self.render_to_json(response, request_handler=self)
+        elif extension == 'jsonp':
+            self.set_header("Content-Type", "application/javascript; charset=UTF-8")
+            callback = kwargs.get('callback') if kwargs.get('callback') else fn.__name__
+            return "%s(%s);" % (callback, json.dumps(response))
+        elif extension == 'xml':
+            return self.render_to_xml(response, request_handler=self)
+
+    return wrapped
