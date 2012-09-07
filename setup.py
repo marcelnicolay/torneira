@@ -44,10 +44,15 @@ setup(
         "tornado>=2.3",
         "python-daemon>=1.6",
     ],
-    test_suite="nose.collector",
     entry_points={
         'console_scripts': [
             'torneira = torneira.runner:run',
         ],
     },
+    test_suite="nose.collector",
+    tests_require=[
+        "nose>=1.1.2",
+        "fudge>=1.0.3",
+        "coverage>=3.5.1",
+    ],
 )
