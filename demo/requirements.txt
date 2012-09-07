@@ -1,5 +1,2 @@
 tornado
 mako
-routes
-https://github.com/marcelnicolay/simplexml/tarball/master
-simplejson
