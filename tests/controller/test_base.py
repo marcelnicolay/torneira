@@ -164,37 +164,41 @@ class BaseControllerTestCase(AsyncHTTPTestCase):
         parsed_response = json.loads(response.body)
         self.assertEqual(parsed_response, expected)
 
-    def test_render_to_response_should_return_data_in_expected_format(self):
-        expected = {'root': {'key': 'value'}}
 
-        # (no extension - Tornado default)
+class RenderToExtensionDecoratorTestCase(AsyncHTTPTestCase):
+    EXPECTED_RESPONSE = {'root': {'key': 'value'}}
+
+    def get_app(self):
+        return app
+
+    def test_render_response_without_specifying_extension_should_return_json(self):
         response = self.fetch('/controller/render-to-extension.')
         self.assertTrue('Content-Type' in response.headers)
         self.assertEqual(response.headers['Content-Type'], 'application/json; charset=UTF-8')
         self.assertEqual(response.code, 200)
         parsed_response = json.loads(response.body)
-        self.assertEqual(parsed_response, expected)
+        self.assertEqual(parsed_response, self.EXPECTED_RESPONSE)
 
-        # .json
+    def test_render_response_as_json(self):
         response = self.fetch('/controller/render-to-extension.json')
         self.assertTrue('Content-Type' in response.headers)
         self.assertEqual(response.headers['Content-Type'], 'application/json; charset=UTF-8')
         self.assertEqual(response.code, 200)
         parsed_response = json.loads(response.body)
-        self.assertEqual(parsed_response, expected)
+        self.assertEqual(parsed_response, self.EXPECTED_RESPONSE)
 
-        # .jsonp
+    def test_render_response_as_jsonp(self):
         response = self.fetch('/controller/render-to-extension.jsonp?callback=cb')
         self.assertTrue('Content-Type' in response.headers)
         self.assertEqual(response.headers['Content-Type'], 'application/javascript; charset=UTF-8')
         self.assertEqual(response.code, 200)
-        expected_response = "cb(%s);" % json.dumps(expected)
+        expected_response = "cb(%s);" % json.dumps(self.EXPECTED_RESPONSE)
         self.assertEqual(response.body, expected_response)
 
-        # .xml
+    def test_render_response_as_xml(self):
         response = self.fetch('/controller/render-to-extension.xml')
         self.assertTrue('Content-Type' in response.headers)
         self.assertEqual(response.headers['Content-Type'], 'text/xml; charset=UTF-8')
         self.assertEqual(response.code, 200)
         parsed_response = simplexml.loads(response.body)
-        self.assertEqual(parsed_response, expected)
+        self.assertEqual(parsed_response, self.EXPECTED_RESPONSE)
