@@ -16,10 +16,7 @@ import pickle
 
 from torneira.helper.encoding import smart_unicode, smart_str
 
-try:
-    import memcache
-except ImportError, ie:
-    import cmemcache as memcache
+import memcache
 
 
 class MemcachedClass():
