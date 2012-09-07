@@ -40,6 +40,10 @@ class BaseController(TorneiraHandler, MakoMixin):
 
         return arguments
 
+    def get(self, *args, **kwargs):
+        kwargs.update(self._prepare_arguments_for_kwargs())
+        super(BaseController, self).get(*args, **kwargs)
+
     def post(self, *args, **kwargs):
         kwargs.update(self._prepare_arguments_for_kwargs())
         super(BaseController, self).post(*args, **kwargs)

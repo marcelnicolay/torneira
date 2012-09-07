@@ -23,7 +23,7 @@ import simplexml
 from tornado.testing import AsyncHTTPTestCase
 from tornado.web import Application, url
 
-from torneira.controller import BaseController
+from torneira.controller import BaseController, render_to_extension
 
 
 class SimpleController(BaseController):
@@ -68,6 +68,10 @@ class SimpleController(BaseController):
         message = 'success!'
         return self.render_success(message)
 
+    @render_to_extension
+    def render_to_extension_with_decorator(self, request_handler, *args, **kwargs):
+        return {'root': {'key': 'value'}}
+
 
 urls = (
     url(r'/controller/simple/', SimpleController, {'action': 'index'}),
@@ -76,6 +80,7 @@ urls = (
     url(r'/controller/render-xml/', SimpleController, {'action': 'render_xml'}),
     url(r'/controller/render-error/', SimpleController, {'action': 'render_response_error'}),
     url(r'/controller/render-success/', SimpleController, {'action': 'render_response_success'}),
+    url(r'/controller/render-to-extension\.(?P<extension>[a-z]*)', SimpleController, {'action': 'render_to_extension_with_decorator'}),
 )
 app = Application(urls, cookie_secret='secret')
 
@@ -157,4 +162,39 @@ class BaseControllerTestCase(AsyncHTTPTestCase):
             'message': 'success!'
         }
         parsed_response = json.loads(response.body)
+        self.assertEqual(parsed_response, expected)
+
+    def test_render_to_response_should_return_data_in_expected_format(self):
+        expected = {'root': {'key': 'value'}}
+
+        # (no extension - Tornado default)
+        response = self.fetch('/controller/render-to-extension.')
+        self.assertTrue('Content-Type' in response.headers)
+        self.assertEqual(response.headers['Content-Type'], 'application/json; charset=UTF-8')
+        self.assertEqual(response.code, 200)
+        parsed_response = json.loads(response.body)
+        self.assertEqual(parsed_response, expected)
+
+        # .json
+        response = self.fetch('/controller/render-to-extension.json')
+        self.assertTrue('Content-Type' in response.headers)
+        self.assertEqual(response.headers['Content-Type'], 'application/json; charset=UTF-8')
+        self.assertEqual(response.code, 200)
+        parsed_response = json.loads(response.body)
+        self.assertEqual(parsed_response, expected)
+
+        # .jsonp
+        response = self.fetch('/controller/render-to-extension.jsonp?callback=cb')
+        self.assertTrue('Content-Type' in response.headers)
+        self.assertEqual(response.headers['Content-Type'], 'application/javascript; charset=UTF-8')
+        self.assertEqual(response.code, 200)
+        expected_response = "cb(%s);" % json.dumps(expected)
+        self.assertEqual(response.body, expected_response)
+
+        # .xml
+        response = self.fetch('/controller/render-to-extension.xml')
+        self.assertTrue('Content-Type' in response.headers)
+        self.assertEqual(response.headers['Content-Type'], 'text/xml; charset=UTF-8')
+        self.assertEqual(response.code, 200)
+        parsed_response = simplexml.loads(response.body)
         self.assertEqual(parsed_response, expected)
