@@ -11,15 +11,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 
 from setuptools import setup, find_packages
+
 from torneira import __version__
+
+README_FILE = os.path.join(os.path.dirname(__file__), 'README.rst')
 
 setup(
     name='torneira',
     version=__version__,
     description="Torneira is a lightweight web framework build on top of Tornado",
-    long_description="""Torneira is a lightweight web framework build on top of Tornado""",
+    long_description=open(README_FILE).read(),
     keywords=['torneira', 'tornado'],
     author='Marcel Nicolay',
     author_email='marcel.nicolay@gmail.com',
