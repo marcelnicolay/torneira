@@ -45,34 +45,3 @@ class TorneiraServer(object):
         logging.info("Starting Torneira Server on port %s" % self.port)
 
         IOLoop.instance().start()
-
-
-class TorneiraHandler(object):
-    _action = None
-
-    def initialize(self, action=None):
-        self._action = action
-        self.setup_locale()
-
-    def define_current_locale(self, locale_code):
-        self._current_locale = locale.get(locale_code)
-
-    def setup_locale(self):        
-        if not hasattr(settings, 'LOCALE'):
-            return
-            
-        assert settings.LOCALE.has_key('code')
-        assert settings.LOCALE.has_key('path')
-        assert settings.LOCALE.has_key('domain')
-
-        locale_code = settings.LOCALE['code']
-        locale.set_default_locale(locale_code)
-        locale.load_gettext_translations(settings.LOCALE['path'],
-                                         settings.LOCALE['domain'])
-        self.define_current_locale(locale_code)
-
-    def get_translate(self):
-        if not self._current_locale:
-            return lambda s: s
-        else:
-            return self._current_locale.translate

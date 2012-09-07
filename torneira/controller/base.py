@@ -14,6 +14,8 @@
 
 import functools
 
+from tornado import locale
+from torneira import settings
 from torneira.handler import TorneiraHandler
 from torneira.template import MakoMixin
 
@@ -29,6 +31,10 @@ except ImportError:
     simplexml = None
 
 class BaseController(TorneiraHandler, MakoMixin):
+    def initialize(self, *args, **kwargs):
+        super(BaseController, self).initialize(*args, **kwargs)
+        self.setup_locale()
+
     def _process_request(self, *args, **kwargs):
         kwargs['request_handler'] = self
         super(BaseController, self)._process_request(*args, **kwargs)
@@ -67,6 +73,29 @@ class BaseController(TorneiraHandler, MakoMixin):
 
     def render_success(self, message="Operação realizada com sucesso!", **kw):
         return self.render_to_json({"errors": "", "message": message}, **kw)
+
+    def define_current_locale(self, locale_code):
+        self._current_locale = locale.get(locale_code)
+
+    def setup_locale(self):
+        if not hasattr(settings, 'LOCALE'):
+            return
+
+        assert 'code' in settings.LOCALE
+        assert 'path' in settings.LOCALE
+        assert 'domain' in settings.LOCALE
+
+        locale_code = settings.LOCALE['code']
+        locale.set_default_locale(locale_code)
+        locale.load_gettext_translations(settings.LOCALE['path'],
+                                         settings.LOCALE['domain'])
+        self.define_current_locale(locale_code)
+
+    def get_translate(self):
+        if not self._current_locale:
+            return lambda s: s
+        else:
+            return self._current_locale.translate
 
 
 def render_to_extension(fn):

@@ -14,6 +14,7 @@
 import json
 import urllib
 
+import fudge
 from tornado.testing import AsyncHTTPTestCase
 from tornado.web import Application, url
 
@@ -171,6 +172,34 @@ class BaseControllerTestCase(AsyncHTTPTestCase):
         }
         parsed_response = json.loads(response.body)
         self.assertEqual(parsed_response, expected)
+
+    @fudge.patch('torneira.controller.base.locale',
+                 'torneira.controller.base.settings')
+    def test_if_can_setup_tornado_locale_module(self, locale, settings):
+        LOCALE = {
+            'code': 'pt_BR',
+            'path': 'locales/',
+            'domain': 'appname',
+        }
+        settings.has_attr(LOCALE=LOCALE)
+
+        (locale
+            .is_a_stub()
+            .expects('set_default_locale')
+            .with_args('pt_BR')
+            .expects('load_gettext_translations')
+            .with_args('locales/', 'appname'))
+
+        response = self.fetch('/controller/simple/')
+        self.assertEqual(response.code, 200)
+
+    @fudge.patch('torneira.controller.base.settings')
+    def test_raise_assertexception_if_settings_locale_was_not_configured(self, settings):
+        settings.has_attr(LOCALE={})
+
+        with self.assertRaises(AssertionError):
+            response = self.fetch('/controller/simple/')
+            self.assertEqual(response.code, 200)
 
 
 class RenderToExtensionDecoratorTestCase(AsyncHTTPTestCase):
