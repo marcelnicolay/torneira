@@ -14,8 +14,7 @@ class CLI(object):
         "END": "",
     }
 
-    @staticmethod
-    def show_colors():
+    def enable_colors(self):
         CLI.color = {
             "PINK": "\033[35m",
             "BLUE": "\033[34m",
@@ -30,7 +29,7 @@ class CLI(object):
         self.__config_parser()
 
     def __config_parser(self):
-        self.__parser = OptionParser(usage="usage: %prog [options] start")
+        self.__parser = OptionParser(usage="usage: %prog [options]")
 
         self.__parser.add_option("-s", "--settings",
                 dest="settings_file",
@@ -67,29 +66,28 @@ class CLI(object):
 
         self.__parser.add_option("-v", "--version",
                 action="store_true",
-                dest="torneira_version",
+                dest="print_version",
                 default=False,
-                help="Displays torneira version and exit.")
+                help="Displays tornado and torneira version and exit.")
 
-        self.__parser.add_option("--color",
+        self.__parser.add_option("--colors",
                 action="store_true",
-                dest="show_colors",
+                dest="enable_colors",
                 default=False,
                 help="Output with beautiful colors.")
-
-    def get_parser(self):
-        return self.__parser
 
     def parse(self):
         return self.__parser.parse_args()
 
-    def error_and_exit(self, msg):
-        self.msg("[ERROR] %s\n" % msg, "RED")
+    def print_error(self, msg):
+        self.print_msg(msg, "RED", out=sys.stderr)
         sys.exit(1)
 
-    def info_and_exit(self, msg):
-        self.msg("%s\n" % msg, "BLUE")
+    def print_info(self, msg):
+        self.print_msg(msg, "BLUE")
         sys.exit(0)
 
-    def msg(self, msg, color="CYAN"):
-        print "%s%s%s" % (self.color[color], msg, self.color["END"])
+    def print_msg(self, msg, color='END', out=None):
+        if not out:
+            out = sys.stdout
+        out.write("%s%s%s\n" % (self.color[color], msg, self.color["END"]))

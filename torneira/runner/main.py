@@ -1,16 +1,25 @@
+# coding: utf-8
+from __future__ import with_statement
+
+import daemon
 import os
 import sys
 import traceback
 from cli import CLI
 
+import lockfile
+import tornado
 import torneira
 
 
 class Main(object):
-    def __init__(self):
-        self.cli = CLI()
+    def __init__(self, cli, options, args):
+        self.options = options
+        self.args = args
+        self.cli = cli
 
-    def start(self, options, args):
+    def start(self):
+        options = self.options
         # set path
         sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(options.settings_file)), ".."))
         sys.path.insert(0, os.path.dirname(os.path.abspath(options.settings_file)))
@@ -21,28 +30,24 @@ class Main(object):
 
         from torneira.core.server import TorneiraServer
         server = TorneiraServer(
-            pidfile=options.pidfile,
             port=options.port,
             media_dir=os.path.abspath(options.media_dir),
             xheaders=options.xheaders
         )
 
         if options.daemon:
-            if args[0] == "start":
-                server.start()
+            pidfile = '%s.%s' % (options.pidfile, options.port)
+            lock = lockfile.FileLock(pidfile)
+            if lock.is_locked():
+                sys.stderr.write("torneira already running on port %s\n" % options.port)
+                return
 
-            elif args[0] == "stop":
-                server.stop()
-
-            elif args[0] == "restart":
-                server.restart()
+            context = daemon.DaemonContext(pidfile=lock)
+            with context:
+                server.run()
         else:
             server.run()
 
-    def excecute(self):
-        (options, args) = self.cli.parse()
-        if args and args[0] in ('start', 'stop', 'restart'):
-            try:
-                self.start(options, args)
-            except Exception:
-                traceback.print_exc(file=sys.stderr)
+    def print_version(self):
+        msg = 'torneira v%s' % torneira.__version__
+        self.cli.print_msg(msg)

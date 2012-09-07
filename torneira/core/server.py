@@ -17,19 +17,16 @@ import logging
 from tornado.web import Application, StaticFileHandler, URLSpec
 from tornado.ioloop import IOLoop
 
-from torneira.core.daemon import Daemon
 from torneira import settings
 
 
-class TorneiraServer(Daemon):
+class TorneiraServer(object):
 
-    def __init__(self, pidfile, port, media_dir, xheaders=False):
+    def __init__(self, port, media_dir, xheaders=False):
         self.port = port
         self.media_dir = media_dir
         self.xheaders = xheaders
         self.urls = self._get_urls()
-
-        return Daemon.__init__(self, pidfile)
 
     def _get_urls(self):
         _imported = __import__(settings.ROOT_URLS, globals(), locals(), ['urls'], -1)
@@ -45,7 +42,7 @@ class TorneiraServer(Daemon):
 
         application.listen(self.port)
 
-        logging.info("Torneira Server START! listening port %s " % self.port)
+        logging.info("Starting Torneira Server on port %s" % self.port)
 
         IOLoop.instance().start()
 
