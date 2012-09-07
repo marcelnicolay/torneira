@@ -26,6 +26,8 @@ directory of your app:
     $ torneira --port 8888 --settings settings.py
 
 In the directory `demos/simple_app/` there is a minimal app already configured.
+If you want to see a more complex app that uses more available features, take a
+look at `demos/more_complex_app`.
 
 Contributing
 ------------
