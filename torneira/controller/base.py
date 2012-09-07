@@ -13,15 +13,20 @@
 # limitations under the License.
 
 import functools
+
+from torneira.handler import TorneiraHandler
+from torneira.template import MakoMixin
+
 try:
     import json
 except ImportError:
     import simplejson as json
 
-import simplexml
-from torneira.handler import TorneiraHandler
-from torneira.template import MakoMixin
-
+# simplexml is optional
+try:
+    import simplexml
+except ImportError:
+    simplexml = None
 
 class BaseController(TorneiraHandler, MakoMixin):
     def _process_request(self, *args, **kwargs):
@@ -53,6 +58,7 @@ class BaseController(TorneiraHandler, MakoMixin):
         return json.dumps(data)
 
     def render_to_xml(self, data, request_handler=None, **kw):
+        assert simplexml, "Module simplexml needs to be installed to use this method"
         self.set_header("Content-Type", "text/xml; charset=UTF-8")
         return simplexml.dumps(data)
 

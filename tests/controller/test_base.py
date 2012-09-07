@@ -13,17 +13,24 @@
 # limitations under the License.
 import json
 import urllib
+
+from tornado.testing import AsyncHTTPTestCase
+from tornado.web import Application, url
+
+from torneira.controller import BaseController, render_to_extension
+from tests.util import unittest
+
 try:
     # Python >= 2.6
     from urlparse import parse_qs
 except ImportError:
     from cgi import parse_qs
 
-import simplexml
-from tornado.testing import AsyncHTTPTestCase
-from tornado.web import Application, url
-
-from torneira.controller import BaseController, render_to_extension
+# simplexml module is optional
+try:
+    import simplexml
+except ImportError:
+    simplexml = None
 
 
 class SimpleController(BaseController):
@@ -120,6 +127,7 @@ class BaseControllerTestCase(AsyncHTTPTestCase):
         parsed_response = json.loads(response.body)
         self.assertEqual(parsed_response, expected)
 
+    @unittest.skipUnless(simplexml, "simplexml module not installed")
     def test_render_to_xml_should_return_xml_response(self):
         response = self.fetch('/controller/render-xml/')
         self.assertTrue('Content-Type' in response.headers)
@@ -195,6 +203,7 @@ class RenderToExtensionDecoratorTestCase(AsyncHTTPTestCase):
         expected_response = "cb(%s);" % json.dumps(self.EXPECTED_RESPONSE)
         self.assertEqual(response.body, expected_response)
 
+    @unittest.skipUnless(simplexml, "simplexml module not installed")
     def test_render_response_as_xml(self):
         response = self.fetch('/controller/render-to-extension.xml')
         self.assertTrue('Content-Type' in response.headers)

@@ -42,11 +42,11 @@ Issues
 Please report any issues via [github issues](https://github.com/marcelnicolay/torneira/issues)
 
 Dependencies
---------------------
+------------
 
  * [Tornado](http://www.tornadoweb.org/)
  * [Mako](http://www.makotemplates.org/)
- * [SqlAlchemy](http://www.sqlalchemy.org/)
- * [simplexml](https://github.com/marcelnicolay/simplexml/)
+ * [SqlAlchemy](http://www.sqlalchemy.org/) (optional, only if using torneira.models)
+ * [simplexml](https://github.com/marcelnicolay/simplexml/) (optional, only if using legacy render\_to\_xml)
 
- On Python 2.5, [simplejson](http://code.google.com/p/simplejson/).
+On Python 2.5 we also need [simplejson](http://code.google.com/p/simplejson/) module.
