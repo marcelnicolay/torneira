@@ -23,11 +23,15 @@ setup to you.
 To start the server on por 8888, just run the following command in the base
 directory of your app:
 
-    $ torneira --port 8888 --settings settings.py
+    $ torneira
 
 In the directory `demos/simple_app/` there is a minimal app already configured.
 If you want to see a more complex app that uses more available features, take a
 look at `demos/more_complex_app`.
+
+To see all options that `torneira` command support, run:
+
+    $ torneira --help
 
 Contributing
 ------------

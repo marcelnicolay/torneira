@@ -33,8 +33,8 @@ class CLI(object):
 
         self.__parser.add_option("-s", "--settings",
                 dest="settings_file",
-                default="settings_local.py",
-                help="Use a specific settings file. If not provided, will search for 'settings_local.py' in the current directory.")
+                default="settings.py",
+                help="Use a specific settings file. If not provided, will search for 'settings.py' in the current directory.")
 
         self.__parser.add_option("-d", "--daemon",
                 dest="daemon",
@@ -55,9 +55,9 @@ class CLI(object):
 
         self.__parser.add_option("-p", "--port",
                 dest="port",
-                default=8080,
+                default=8888,
                 type=int,
-                help="Use a specific port number. (default is 8080)")
+                help="Use a specific port number (default is 8888).")
 
         self.__parser.add_option("--pidfile",
                 dest="pidfile",
