@@ -5,6 +5,10 @@ Torneira is a lightweight web framework build on top of Tornado_. It's name
 came from the idea of getting rapid and fluid development ('torneira' is the
 portuguese word for water tap).
 
+.. image:: https://secure.travis-ci.org/marcelnicolay/torneira.png?branch=master
+   :alt: Build Status
+   :target: https://secure.travis-ci.org/marcelnicolay/torneira
+
 Installation
 ------------
 
@@ -32,10 +36,6 @@ look at `demos/more_complex_app`.
 To see all options that `torneira` command support, run:
 
     $ torneira --help
-
-.. image:: https://secure.travis-ci.org/marcelnicolay/torneira.png?branch=master
-   :alt: Build Status
-   :target: https://secure.travis-ci.org/marcelnicolay/torneira
 
 Contributing
 ------------
