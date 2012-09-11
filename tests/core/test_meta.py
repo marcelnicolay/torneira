@@ -33,27 +33,19 @@ class TimerProxyTestCase(unittest.TestCase):
         
         fudge.verify()
 
+    @fudge.test
     def test_timer_proxy_debug_false(self):
 
         settings.DEBUG = False
-
-        fudge.clear_expectations()
-        fudge.clear_calls()
 
         execute_fake = fudge.Fake(callable=True).with_args("shouldBeCursor", "shouldBeStatement", "shouldBeParameters", "shouldBeContext")        
 
         timerProxy = meta.TimerProxy()
         timerProxy.cursor_execute(execute_fake, "shouldBeCursor", "shouldBeStatement", "shouldBeParameters", "shouldBeContext", "shouldBeExecutemany")
 
-        fudge.verify()
-        
 class SessionTestCase(unittest.TestCase):
-    
+    @fudge.test
     def test_can_be_get_session(self):
-        
-        fudge.clear_expectations()
-        fudge.clear_calls()
-        
         settings.DATABASE_ENGINE = "shouldBeDataBase"
         settings.DATABASE_POOL_SIZE = "shouldBePoolSize"
         
@@ -85,7 +77,6 @@ class SessionTestCase(unittest.TestCase):
             session = meta.TorneiraSession()
             self.assertEqual(session, "shouldBeSession")
         finally:
-            fudge.verify()
             
             for p in patches:
                 p.restore()
