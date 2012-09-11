@@ -33,6 +33,10 @@ To see all options that `torneira` command support, run:
 
     $ torneira --help
 
+.. image:: https://secure.travis-ci.org/marcelnicolay/torneira.png?branch=master
+   :alt: Build Status
+   :target: https://secure.travis-ci.org/marcelnicolay/torneira
+
 Contributing
 ------------
 
