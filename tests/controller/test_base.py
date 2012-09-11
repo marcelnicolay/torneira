@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import json
+from __future__ import with_statement
 import urllib
 
 import fudge
@@ -32,6 +32,11 @@ try:
     import simplexml
 except ImportError:
     simplexml = None
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 
 class SimpleController(BaseController):
@@ -93,7 +98,7 @@ urls = (
 app = Application(urls, cookie_secret='secret')
 
 
-class BaseControllerTestCase(AsyncHTTPTestCase):
+class BaseControllerTestCase(AsyncHTTPTestCase, unittest.TestCase):
     def get_app(self):
         return app
 
