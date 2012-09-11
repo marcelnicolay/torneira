@@ -24,10 +24,14 @@ class SimpleController(BaseController):
     def with_parameter(self, param, request_handler):
         return "action_with_parameter " + param
 
+    def preserve_url_name(self, request_handler):
+        return request_handler.reverse_url('name-of-url')
+
+
 urls = (
     url('/controller/simple/', SimpleController, action='index', name='index'),
-    url('/controller/parameter/{param}', SimpleController,\
-        action='with_parameter', name='with_parameter'),
+    url('/controller/parameter/{param}', SimpleController, action='with_parameter', name='with_parameter'),
+    url('/controller/preserve-name/', SimpleController, action='preserve_url_name', name='name-of-url'),
 )
 app = Application(urls, cookie_secret='secret')
 
@@ -45,3 +49,8 @@ class DispatcherTestCase(AsyncHTTPTestCase):
         response = self.fetch('/controller/parameter/shouldBeParam')
         self.assertEqual(response.code, 200)
         self.assertEqual(response.body, 'action_with_parameter shouldBeParam')
+
+    def test_use_routes_for_mapping_urls_should_preserve_the_name_of_url(self):
+        response = self.fetch('/controller/preserve-name/')
+        self.assertEqual(response.code, 200)
+        self.assertEqual(response.body, r'/controller/preserve-name/')
