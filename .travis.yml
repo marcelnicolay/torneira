@@ -8,4 +8,4 @@ install:
     - if [[ $TRAVIS_PYTHON_VERSION == '2.6' ]]; then pip install --use-mirrors unittest2; fi
     - pip install -r requirements.txt --use-mirrors
 script:
-    - make test
+    - nosetests
