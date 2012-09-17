@@ -1,11 +1,10 @@
 # coding: utf-8
-from torneira.cache.util import cache_key, cached
+from torneira.cache.util import cache_key
 
 from tests.util import unittest
 
 
 class MySimpleObject(object):
-    @cached
     def do_something(self, a, b):
         return a + b
 
@@ -16,7 +15,6 @@ class MyModel(object):
     def __init__(self, id_):
         self.id = id_
 
-    @cached
     def do_something(self, a, b):
         return a + b
 
@@ -32,7 +30,6 @@ class ObjectWithSpecialMethod(object):
     def get_cache_key(self):
         return self._my_value
 
-    @cached
     def do_something(a, b):
         return a + b
 
