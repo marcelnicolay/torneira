@@ -46,7 +46,9 @@ def cache_key(instance, method, **kwarguments):
     cachekey = cachekey.replace("{classe}", instance.__class__.__name__)
     cachekey = cachekey.replace("{method}", method)
 
-    if hasattr(instance, "id") and instance.id:
+    if hasattr(instance, "get_cache_key"):
+        cachekey = cachekey.replace("{instanceid}", str(instance.get_cache_key()))
+    elif hasattr(instance, "id") and instance.id:
         cachekey = cachekey.replace("{instanceid}", "%s" % instance.id)
     else:
         cachekey = cachekey.replace("{instanceid}", "")
