@@ -43,7 +43,7 @@ class GenerateCacheKeyTestCase(unittest.TestCase):
 
         fn_kwargs = {'a': 1, 'b': 2}
         _, generated_key = cache_key(my_instance, 'do_something', **fn_kwargs)
-        expected_key = 'tests.cache.test_extension.MySimpleObject().do_something(a=1,b=2)'
+        expected_key = 'tests.cache.test_util.MySimpleObject().do_something(a=1,b=2)'
 
         self.assertEqual(generated_key, expected_key)
 
@@ -52,7 +52,7 @@ class GenerateCacheKeyTestCase(unittest.TestCase):
 
         fn_kwargs = {'a': 1, 'b': 2}
         _, generated_key = cache_key(my_instance, 'do_something', **fn_kwargs)
-        expected_key = 'tests.cache.test_extension.MyModel(unique-id-1).do_something(a=1,b=2)'
+        expected_key = 'tests.cache.test_util.MyModel(unique-id-1).do_something(a=1,b=2)'
 
         self.assertEqual(generated_key, expected_key)
 
@@ -61,6 +61,6 @@ class GenerateCacheKeyTestCase(unittest.TestCase):
 
         fn_kwargs = {'a': 1, 'b': 2}
         _, generated_key = cache_key(my_instance, 'do_something', **fn_kwargs)
-        expected_key = 'tests.cache.test_extension.ObjectWithSpecialMethod(unique-value).do_something(a=1,b=2)'
+        expected_key = 'tests.cache.test_util.ObjectWithSpecialMethod(unique-value).do_something(a=1,b=2)'
 
         self.assertEqual(generated_key, expected_key)

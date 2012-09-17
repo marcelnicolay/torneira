@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import functools
 import inspect
 import logging
 import hashlib
@@ -55,7 +56,7 @@ def cache_key(instance, method, **kwarguments):
 
     params = {}
 
-    argspected = inspect.getargspec(getattr(instance, method).fn).args
+    argspected = inspect.getargspec(getattr(instance, method)).args
     for arg in argspected:
         if arg != 'self':
             params[arg] = ""
@@ -97,23 +98,18 @@ def cached_method(fn, *arguments, **kwarguments):
 
 
 def cached(fn):
+    @functools.wraps(fn)
     def cached_static_fn(*args, **kw):
         return cached_method(fn, *args, **kw)
-    # hack for access decorated function
-    cached_static_fn.fn = fn
-
     return cached_static_fn
 
 
 def cached_timeout(timeout):
     def cached(fn):
+        @functools.wraps(fn)
         def cached_static_fn(*arguments, **kwarguments):
             fn.timeout = timeout
             return cached_method(fn, *arguments, **kwarguments)
-
-        # hack for access decorated function
-        cached_static_fn.fn = fn
-
         return cached_static_fn
     return cached
 
@@ -122,6 +118,7 @@ def async_cached(timeout=None):
     def async_cached_fn(fn):
 
         @gen.engine
+        @functools.wraps(fn)
         def async_cached_wrapper(instance, callback, *arguments, **kwarguments):
             md5key, key = cache_key(instance, fn.__name__, **kwarguments)
 
@@ -137,9 +134,6 @@ def async_cached(timeout=None):
                 logging.debug("GET FROM CACHE")
 
             callback(result)
-
-        # hack for access decorated function
-        async_cached_wrapper.fn = fn
         return async_cached_wrapper
     return async_cached_fn
 
