@@ -129,7 +129,7 @@ def async_cached(timeout=None):
             cache = get_cache()
             result = cache.get(md5key)
 
-            if result:
+            if result is not None:
                 logging.debug("GET FROM CACHE")
             else:
                 result = yield gen.Task(fn, self, *args, **kwargs)
