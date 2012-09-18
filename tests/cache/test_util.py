@@ -1,5 +1,5 @@
 # coding: utf-8
-from torneira.cache.util import cache_key, expire_key
+from torneira.cache.util import cache_key
 
 from tests.util import unittest
 
@@ -61,9 +61,3 @@ class GenerateCacheKeyTestCase(unittest.TestCase):
         expected_key = 'tests.cache.test_util.ObjectWithSpecialMethod(unique-value).do_something(a=1,b=2)'
 
         self.assertEqual(generated_key, expected_key)
-
-
-class ExpireCacheDataTestCase(unittest.TestCase):
-    def test_expire_cache_data_should_call_delete(self):
-        # TODO: how to pass arguments to remove?
-        pass
