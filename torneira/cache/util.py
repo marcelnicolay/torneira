@@ -152,18 +152,3 @@ def expire_key(method, **kw):
     logging.debug("[CACHE][expire] - %s {%s}" % (md5key, key))
 
     cache.delete(md5key)
-
-
-def set_key(method, value, **kw):
-    '''
-    set value as decorated method in cache
-    '''
-    if method.__name__ not in ('cached_static_fn', 'async_cached_wrapper', 'cached'):
-        raise ValueError("Somente metodos decorados com cached, podes ser expirados")
-
-    md5key, key = cache_key(method.im_self or method.im_class(), method.fn.__name__, **kw)
-
-    cache = get_cache()
-    logging.debug("[CACHE][set] - %s {%s}" % (md5key, key))
-
-    cache.set(md5key, value)
