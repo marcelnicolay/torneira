@@ -124,6 +124,8 @@ def async_cached(timeout=None):
             del kwargs['callback']
 
             md5key, key = cache_key(self, fn.__name__, **kwargs)
+            logging.debug("verificando chave %s no cache no formato md5 %s  " % (key, md5key))
+
             cache = get_cache()
             result = cache.get(md5key)
 
