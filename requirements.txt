@@ -9,3 +9,4 @@ simplejson>=2.5.0
 https://github.com/marcelnicolay/simplexml/zipball/0.1.4
 tornado>=2.3
 unittest2>=0.5.1
+python-memcached>=1.48
