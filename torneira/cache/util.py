@@ -115,27 +115,28 @@ def cached_timeout(timeout):
 
 
 def async_cached(timeout=None):
-    def async_cached_fn(fn):
-
-        @gen.engine
+    def async_inner(fn):
         @functools.wraps(fn)
-        def async_cached_wrapper(instance, callback, *arguments, **kwarguments):
-            md5key, key = cache_key(instance, fn.__name__, **kwarguments)
+        @gen.engine
+        def wrapper(self, *args, **kwargs):
+            assert 'callback' in kwargs, "Functions decorated with async_cached must have an callback argument"
+            callback = kwargs['callback']
+            del kwargs['callback']
 
-            logging.debug("verificando chave %s no cache no formato md5 %s  " % (key, md5key))
+            md5key, key = cache_key(self, fn.__name__, **kwargs)
             cache = get_cache()
             result = cache.get(md5key)
 
-            if result is None:
-                result = yield gen.Task(fn, instance, *arguments, **kwarguments)
+            if result:
+                logging.debug("GET FROM CACHE")
+            else:
+                result = yield gen.Task(fn, self, *args, **kwargs)
                 cache.set(md5key, result, timeout)
                 logging.debug("SET IN CACHE %s" % result)
-            else:
-                logging.debug("GET FROM CACHE")
 
             callback(result)
-        return async_cached_wrapper
-    return async_cached_fn
+        return wrapper
+    return async_inner
 
 
 def expire_key(method, **kw):
