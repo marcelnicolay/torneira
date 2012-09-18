@@ -56,8 +56,8 @@ def cache_key(instance, method, **kwarguments):
 
     params = {}
 
-    argspected = inspect.getargspec(getattr(instance, method)).args
-    for arg in argspected:
+    argspected = inspect.getargspec(getattr(instance, method))
+    for arg in argspected[0]:
         if arg != 'self':
             params[arg] = ""
 
