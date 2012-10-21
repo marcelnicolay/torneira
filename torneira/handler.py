@@ -35,3 +35,7 @@ class TorneiraHandler(RequestHandler):
         output = profiler.runcall(method, *args, **kwargs)
         profiler.dump_stats(settings.PROFILE_FILE)
         return output
+
+    def write_error(self, status_code, **kwargs):
+        if self.settings.get('debug') and hasattr(self, 'output_errors'):
+            self.output_errors(status_code, **kwargs)

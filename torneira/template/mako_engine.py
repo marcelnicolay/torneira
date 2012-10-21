@@ -1,5 +1,4 @@
 # coding: utf-8
-import logging
 from mako.exceptions import TopLevelLookupException, html_error_template
 from mako.lookup import TemplateLookup
 from tornado.web import HTTPError
@@ -26,11 +25,7 @@ class MakoMixin(object):
             'url_for': self.reverse_url
         })
 
-        try:
-            return template.render(**context)
-        except Exception, e:
-            if settings.DEBUG:
-                return html_error_template().render()
-            else:
-                logging.exception("Template %s could not be rendered" % template_name)
-                raise e
+        return template.render(**context)
+
+    def output_errors(self, status_code, **kwargs):
+        self.write(html_error_template().render())
