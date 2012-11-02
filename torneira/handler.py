@@ -37,5 +37,5 @@ class TorneiraHandler(RequestHandler):
         return output
 
     def write_error(self, status_code, **kwargs):
-        if self.settings.get('debug') and hasattr(self, 'output_errors'):
+        if hasattr(self, 'output_errors'):
             self.output_errors(status_code, **kwargs)
