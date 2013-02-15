@@ -39,9 +39,9 @@ class TorneiraServer(object):
         static_url = URLSpec(r"/media/(.*)", StaticFileHandler, {"path": self.media_dir}),
         urls = static_url + self.urls
         application = Application(urls, cookie_secret=cookie_secret,
-                                  debug=debug, xheaders=self.xheaders)
+                                  debug=debug)
 
-        application.listen(self.port)
+        application.listen(self.port, xheaders=self.xheaders)
 
         logging.info("Starting Torneira Server on port %s" % self.port)
 
