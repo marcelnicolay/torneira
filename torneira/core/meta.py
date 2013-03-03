@@ -19,7 +19,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.interfaces import ConnectionProxy
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-from torneira import settings
+from torneira.conf import settings
 
 
 class TimerProxy(ConnectionProxy):

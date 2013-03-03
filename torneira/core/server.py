@@ -17,7 +17,7 @@ import logging
 from tornado.web import Application, StaticFileHandler, URLSpec
 from tornado.ioloop import IOLoop
 
-from torneira import settings
+from torneira.conf import settings
 
 
 class TorneiraServer(object):

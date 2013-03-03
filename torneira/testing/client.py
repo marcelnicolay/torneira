@@ -4,8 +4,8 @@ from tornado.httpserver import HTTPRequest
 from tornado.escape import parse_qs_bytes, native_str
 from tornado.web import Application, HTTPError
 
+from torneira.conf import settings
 from torneira.core.server import TorneiraHandler
-from torneira import settings
 
 
 class TestingClient(object):

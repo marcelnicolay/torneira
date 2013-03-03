@@ -1,7 +1,8 @@
 # coding: utf-8
 from tornado.testing import AsyncHTTPTestCase
 from tornado.web import Application
-from torneira import settings
+
+from torneira.conf import settings
 
 
 class TestCase(AsyncHTTPTestCase):

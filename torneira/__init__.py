@@ -15,16 +15,3 @@
 # limitations under the License.
 #
 __version__ = '0.3.3'
-
-try:
-    import settings_local as settings
-except ImportError, ie:
-    try:
-        import settings
-    except ImportError, ie:
-        class settings(object):
-            DEBUG = True
-            PROFILING = False
-            COOKIE_SECRET = ""
-
-settings = settings

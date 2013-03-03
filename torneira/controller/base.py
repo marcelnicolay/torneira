@@ -15,7 +15,7 @@
 import functools
 
 from tornado import locale
-from torneira import settings
+from torneira.conf import settings
 from torneira.handler import TorneiraHandler
 from torneira.template import MakoMixin
 
@@ -29,6 +29,7 @@ try:
     import simplexml
 except ImportError:
     simplexml = None
+
 
 class BaseController(TorneiraHandler, MakoMixin):
     def initialize(self, *args, **kwargs):

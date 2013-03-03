@@ -3,7 +3,7 @@ from cProfile import Profile
 
 from tornado.web import RequestHandler
 
-from torneira import settings
+from torneira.conf import settings
 
 
 class TorneiraHandler(RequestHandler):

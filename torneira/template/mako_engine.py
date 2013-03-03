@@ -3,7 +3,7 @@ from mako.exceptions import TopLevelLookupException, html_error_template
 from mako.lookup import TemplateLookup
 from tornado.web import HTTPError
 
-from torneira import settings
+from torneira.conf import settings
 
 
 class MakoMixin(object):

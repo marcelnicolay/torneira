@@ -20,7 +20,7 @@ import hashlib
 from tornado import gen
 
 from torneira.cache.backend import MemcachedClass, DummyClass, RedisClass
-from torneira import settings
+from torneira.conf import settings
 
 __cache__ = None
 

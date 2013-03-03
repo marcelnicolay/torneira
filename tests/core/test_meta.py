@@ -14,7 +14,7 @@
 
 import unittest, fudge
 
-from torneira import settings
+from torneira.conf import settings
 from torneira.core import meta
 
 class TimerProxyTestCase(unittest.TestCase):

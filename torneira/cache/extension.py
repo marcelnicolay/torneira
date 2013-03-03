@@ -20,7 +20,7 @@ from sqlalchemy.orm.query import Query
 from sqlalchemy.orm import attributes, MapperExtension, EXT_CONTINUE, EXT_STOP
 from sqlalchemy.orm.session import Session
 
-from torneira import settings
+from torneira.conf import settings
 from torneira.cache.util import get_cache, cache_key
 
 

@@ -18,17 +18,24 @@ class Main(object):
         self.args = args
         self.cli = cli
 
-    def start(self):
-        options = self.options
-        # set path
-        sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(options.settings_file)), ".."))
-        sys.path.insert(0, os.path.dirname(os.path.abspath(options.settings_file)))
+    def setup_import_path(self):
+        filename = os.path.abspath(self.options.settings_file)
+        if not os.path.exists(filename):
+            self.cli.print_error("Settings file %s not found" % filename)
+            return None
 
-        # set setting
-        exec("import %s as settings" % os.path.splitext(os.path.basename(options.settings_file))[0])
-        torneira.settings = settings  
+        settings_dir = os.path.dirname(filename)
+        parent_dir = os.path.abspath(os.path.join(settings_dir, '..'))
+
+        sys.path.insert(0, parent_dir)
+        sys.path.insert(0, settings_dir)
+
+    def start(self):
+        self.setup_import_path()
 
         from torneira.core.server import TorneiraServer
+
+        options = self.options
         server = TorneiraServer(
             port=options.port,
             media_dir=os.path.abspath(options.media_dir),
