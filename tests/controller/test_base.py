@@ -203,8 +203,7 @@ class BaseControllerTestCase(AsyncHTTPTestCase, unittest.TestCase):
         settings.has_attr(LOCALE={})
 
         with self.assertRaises(AssertionError):
-            response = self.fetch('/controller/simple/')
-            self.assertEqual(response.code, 200)
+            self.fetch('/controller/simple/')
 
 
 class RenderToExtensionDecoratorTestCase(AsyncHTTPTestCase):
