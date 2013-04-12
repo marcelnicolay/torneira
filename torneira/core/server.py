@@ -33,13 +33,17 @@ class TorneiraServer(object):
         return _imported.urls
 
     def run(self):
-        cookie_secret = settings.COOKIE_SECRET if hasattr(settings, 'COOKIE_SECRET') else None
-        debug = getattr(settings, 'DEBUG', False)
+        conf = {
+            'debug': getattr(settings, 'DEBUG', False),
+            'cookie_secret': getattr(settings, 'COOKIE_SECRET', None),
+        }
+
+        if hasattr(settings, 'LOG_FUNCTION'):
+            conf['log_function'] = settings.LOG_FUNCTION
 
         static_url = URLSpec(r"/media/(.*)", StaticFileHandler, {"path": self.media_dir}),
         urls = static_url + self.urls
-        application = Application(urls, cookie_secret=cookie_secret,
-                                  debug=debug)
+        application = Application(urls, **conf)
 
         application.listen(self.port, xheaders=self.xheaders)
 
